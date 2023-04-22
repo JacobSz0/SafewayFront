@@ -1,0 +1,139 @@
+.App {
+  text-align: center;
+}
+
+.nav-bar-green{
+  background-image: linear-gradient(to right top, #569e67, #519561, #4c8d5c, #478456, #427c51);
+}
+
+.nav-main{
+  color: #000000;
+  font-size: 22px;
+  color: inherit;
+}
+
+.nav-main:hover{
+  color: #000000;
+}
+
+.bg {
+  background-color: rgb(53, 53, 53);
+}
+
+.bg-lite{
+  background-color: white;
+}
+
+.blue-background {
+  background-color: darkblue;
+}
+
+.red-background {
+  background-color: darkred;
+}
+
+.yellow-background {
+  background-color: rgb(141, 141, 0);
+}
+
+.green-background {
+  background-color: darkgreen;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text {
+  text-align: center;
+  color: white
+}
+.border{border: 5px;}
+
+.qr{
+  background-color: white;
+  padding: 10px;
+}
+
+.tooltip-wrap {
+  position: relative;
+}
+.tooltip-wrap .tooltip-content {
+  display: none;
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+  right: 5%;
+  background-color: #fff;
+  padding: .5em;
+  min-width: 10rem;
+}
+.tooltip-wrap:hover .tooltip-content {
+  display: block;
+}
+
+.information-image {
+  height: 20px;
+  width: auto;
+}
+
+.center {
+  margin: auto;
+  width: 273px;
+  border: 3px solid green;
+  padding: 10px;
+}
+.textarea{
+  width: 400px;
+  margin: auto;
+}
+
+.padding{
+  border: 10px;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+
+.my-card {
+  margin-left: auto;
+  margin-right: auto;
+}
+.navbar-nav {
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+}
+.navbar-nav li a {
+  color: #fff;
+  font-size: 18px;
+  padding: 10px;
+  text-decoration: none;
+}
+.navbar-item li a:hover {
+  text-decoration-color: #ffffff;
+}
+.footer {
+  font-family: Arial, Helvetica, sans-serif;
+
+  bottom: 0;
+  width: 100%;
+  color: #000000;
+  text-align: center;
+}
+footer a {
+  color: #000000;
+  text-decoration-line: none;
+}
+footer a:hover {
+  text-decoration: rgb(255, 255, 255);
+}
