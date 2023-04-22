@@ -18,8 +18,8 @@ function App() {
         <div className="borderd">
           <Routes>
             <Route path="/" element={<MainPage />} />
-            <Route path="dotcom" element={<DotCom />} />
-            <Route path="route-display" element={<RouteDisplay />} />
+            <Route path="/dotcom" element={<DotCom />} />
+            <Route path="/route-display" element={<RouteDisplay />} />
           </Routes>
         </div>
         <Foot/>
