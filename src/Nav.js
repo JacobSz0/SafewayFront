@@ -8,6 +8,10 @@ function Nav() {
         <NavLink className="nav-main" to="/">
           Main
         </NavLink>
+        <NavLink className="nav-link" to="/dotcom">
+          DotCom
+        </NavLink>
+
       </div>
     </nav>
   );
