@@ -1,7 +1,7 @@
 {
   "name": "safeway",
   "version": "0.1.0",
-  "homepage": "https://github.com/JacobSz0/SafewayFront",
+  "homepage": "https://jacobsz0.github.io/SafewayFront",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
