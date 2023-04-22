@@ -156,7 +156,7 @@ function DotCom() {
   };
 
   function condenseLink(bigData){
-    var condensedLink="http://localhost:4000/route-display?data="
+    var condensedLink="https://jacobsz0.github.io/SafewayFront/route-display?data="
     for (var i of bigData[0]){
     	var start=i["startTime24"].split(":")
       var end=i["endTime24"].split(":")
