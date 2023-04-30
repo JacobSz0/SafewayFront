@@ -12,6 +12,7 @@ function DotCom() {
   const [initButton, setInitButton] = useState(true)
   const [newRouteLink, setNewRouteLink] = useState("http://localhost:4000/dotcom")
   const [showQr, setShowQr] = useState(false)
+  const [timeWindows, setTimeWindows] = useState(true)
 
   function isNumeric(value) {
     return /^-?\d+$/.test(value);
@@ -23,6 +24,15 @@ function DotCom() {
 
   function initTab() {
     setInitButton(true)
+  }
+
+  function handleTimeWindowsChange(){
+    if (timeWindows===true){
+      setTimeWindows(false)
+    }
+    if (timeWindows===false){
+      setTimeWindows(true)
+    }
   }
 
   function exportToPdf() {
@@ -83,12 +93,16 @@ function DotCom() {
         var instruction=""
         var phoneNumber=""
         var orderNumber=""
+        var is1508=false
         var cnt=0
         for (let j = 0; j < newd.length; j++) {
+          if (newd[j]==="001"){
+            var routeLetter=newd[j-11]
+          }
           if (newd[j] === "WINDOW:"){
             var startTime=newd[j+1]+" "+newd[j+2]
             var endTime=newd[j+4]+" "+newd[j+5]
-            var oldRoute=newd[j-1]
+            var oldRoute=routeLetter+"-"+newd[j-1]
           }
           if (newd[j] === "TIME:"){nameBool=true}
           if (nameBool===true && isNumeric(newd[j])===true){
@@ -100,7 +114,19 @@ function DotCom() {
             if (cnt>2){name+=" "}
             if (cnt>1){name+=newd[j]}
           }
-          if (newd[j+3]==="ORDER"){
+
+          if (newd[j+1]==="INSTRUCTIONS:"){
+            is1508=true
+            addressBool=false
+          }
+          if (newd[j-1]==="INSTRUCTIONS:"){
+            instructionBool=true
+            cnt=1
+          }
+          if (newd[j]==="ORDER"){
+            orderNumber=newd[j+1]
+          }
+          if (newd[j+3]==="ORDER" && !is1508){
             addressBool=false;
             address+=" "
             address+=newd[j+1]
@@ -216,19 +242,25 @@ function DotCom() {
       const storeCoordinates = {"1508": "47.5688609,-122.2879537", "1143": "47.6901322,-122.3761618", "1142": "47.6787852, -122.1733922", "1798": "47.151927947998,-122.35523223877", "1680": "47.6527018,-122.6881439", "1803": "48.004510,-122.118270", "3545": "47.249360,-122.296190", "2645": "47.875460,-122.153910", "1624": "47.541620,-122.048290", "1966": "47.357130,-122.166860"}
 
       var year = new Date().getFullYear()
-      var month = new Date().getMonth()
+      var month = new Date().getMonth()+1
       if (month<10){month="0"+month}
-      var day = new Date().getDay()
+      var day = new Date().getDate()
       if (day<10){day="0"+day}
       var beginTime = coordinateComplete[0]["startTime24"]
       var offset = new Date().getTimezoneOffset();
       offset=offset/60
 
-      var routerLink="https://wps.hereapi.com/v8/findsequence2?departure="+year+"-"+day+"-"+month+"T"+beginTime+":00-0"+offset+":00"+"&mode=fastest;car;traffic:enabled&start="+storeNumber+";"+storeCoordinates[storeNumber]
+      var routerLink="https://wps.hereapi.com/v8/findsequence2?departure="+year+"-"+month+"-"+day+"T"+beginTime+":00-0"+offset+":00"+"&mode=fastest;car;traffic:enabled&start="+storeNumber+";"+storeCoordinates[storeNumber]
       var cnt=0
       for (var i of coordinateComplete){
         cnt+=1
-        var stop="&destination"+cnt+"="+i["orderNumber"]+";"+i["coordinates"]["lat"]+","+i["coordinates"]["lng"]+";acc:mo"+i["startTime24"]+":00-0"+offset+":00%7cmo"+i["endTime24"]+":00-0"+offset+":00;st:420"
+        if (timeWindows===true){
+          console.log("Time Windows")
+          var stop="&destination"+cnt+"="+i["orderNumber"]+";"+i["coordinates"]["lat"]+","+i["coordinates"]["lng"]+";acc:mo"+i["startTime24"]+":00-0"+offset+":00%7cmo"+i["endTime24"]+":00-0"+offset+":00;st:420" // The 420 is the amount of seconds between stops on average
+        }
+        else{
+          var stop="&destination"+cnt+"="+i["orderNumber"]+";"+i["coordinates"]["lat"]+","+i["coordinates"]["lng"]+";st:300"
+        }
         routerLink+=stop
       }
       routerLink=routerLink+"&end="+11177777484+";"+storeCoordinates[storeNumber]+"&improveFor=TIME"+"&apikey=DqS4NCThFlPj61WbL-TLX-hqnzz28loSxsvmZ4TCdoc"
@@ -247,6 +279,9 @@ function DotCom() {
             for (var i of h["waypoints"])
               for (var j of coordinateComplete){
                 if (i["id"]===j["orderNumber"]){
+                  var splitETA=i["estimatedArrival"].split("T")
+                  var splitETA2=splitETA[1].split(":")
+                  j["ETA"]=splitETA2[0]+":"+splitETA2[1]
                   newOne.push(j)
                 }
               }
@@ -332,6 +367,15 @@ function DotCom() {
             ))}
           </select>
           <span>--</span>
+          <label className="text">
+            Time Windows Included?....
+            <input
+              type="checkbox"
+              checked={timeWindows}
+              onChange={handleTimeWindowsChange}
+            />
+          </label>
+          <span>--</span>
           <button onClick={Route}>ROUTE!</button>
         </div>
         </div>
@@ -357,6 +401,7 @@ function DotCom() {
                 <td className="text">Address</td>
                 <td className="text">Time Window</td>
                 <td className="text">Phone #</td>
+                <td className="text">ETA</td>
                 <td className="text">Order #</td>
               </tr>
             </thead>
@@ -369,6 +414,7 @@ function DotCom() {
                   <td><a href={"https://maps.google.com/?q=" + i.address}>{i.address}</a></td>
                   <td>{i.startTime} - {i.endTime}</td>
                   <td>{i.phoneNumber}</td>
+                  <td>{i["ETA"]}</td>
                   <td>{i.orderNumber}</td>
                 </tr>
               )

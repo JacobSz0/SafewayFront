@@ -13,7 +13,7 @@ function App() {
 
   return (
     <div className="bg">
-    <BrowserRouter basename={basename}>
+
         <Nav />
         <div className="borderd">
           <Routes>
@@ -23,7 +23,6 @@ function App() {
           </Routes>
         </div>
         <Foot/>
-    </BrowserRouter>
     </div>
   );
 }
