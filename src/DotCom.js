@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import JSpdf from "jspdf";
 import QRCode from "qrcode.react";
 import h2c from "html2canvas";
+import Tooltip from "react-tooltip";
+import info from "./img/info.png"
+import pdf from "./img/pdf.png"
+import qrico from "./img/qrico.png"
+import copy from "./img/copy.png"
 
 
 function DotCom() {
@@ -81,6 +86,7 @@ function DotCom() {
 
   function processData(secret) {
     if (secret){
+      var phone1508=[]
       const secretArray = secret.split("SIGNATURE");
       var secretArray2=[]
       for (var i of secretArray){
@@ -88,6 +94,7 @@ function DotCom() {
         var nameBool=false
         var addressBool=false
         var instructionBool=false
+        var phoneBool=false
         var name=""
         var address=""
         var instruction=""
@@ -106,7 +113,7 @@ function DotCom() {
           }
           if (newd[j] === "TIME:"){nameBool=true}
           if (nameBool===true && isNumeric(newd[j])===true){
-          nameBool=false
+            nameBool=false
             addressBool=true
             cnt=0}
           if (nameBool===true && isNumeric(newd[j])===false){
@@ -146,8 +153,12 @@ function DotCom() {
           }
           if (instructionBool===true){
             cnt+=1
-          if (cnt>2){instruction+=" "}
-            if (cnt>1){instruction+=newd[j]}
+            if (cnt>2){instruction+=" "}
+            if (cnt>1){instruction+=newd[j]} ;
+          }
+          //phone number formatted badly at 1508. This is the fix
+          if (newd[j].length===10 && isNumeric(newd[j])===true && instructionBool===false){
+            phone1508.push(newd[j])
           }
         }
         if (address!==""){
@@ -157,13 +168,30 @@ function DotCom() {
           secretObj["endTime"]=endTime
           secretObj["name"]=name
           secretObj["address"]=address
-          secretObj["instruction"]=instruction
+          if (instruction===""){
+            secretObj["instruction"]=false
+          }
+          else{
+            secretObj["instruction"]=instruction
+          }
           secretObj["phoneNumber"]=phoneNumber
           secretObj["orderNumber"]=orderNumber
           secretArray2.push(secretObj)
         }
       }
+      var phoneOffset=0
+      for (let i = 0; i < secretArray2.length; i++) {
+        var modulo=i+1
+        if (modulo%9!==0){
+          secretArray2[i]["phoneNumber"]=phone1508[phoneOffset]
+          phoneOffset+=1
+        }
+        else{
+          secretArray2[i]["phoneNumber"]="ErrorCode:1508"
+        }
+      }
       console.log(secretArray2)
+      console.log(phone1508)
       console.log(storeNumber)
       setManifestData(secretArray2)
     }
@@ -190,24 +218,25 @@ function DotCom() {
       var dashedName=""
       for(var j of names){
       	dashedName+=j
-        dashedName+="-"
+        dashedName+="_"
       }
       var address=i["address"].split(" ")
+
       var dashedAddress=""
       for (var j of address){
       	dashedAddress+=j
-        dashedAddress+="-"
+        dashedAddress+="_"
       }
 
-    	var condensedPart=i["oldRoute"]+"-"+start[0]+"-"+end[0]+"-"+i["phoneNumber"]+"-"+i["orderNumber"]+"-"+dashedName+"5z1-"+dashedAddress
-      console.log(!""===i["instruction"])
-      if (i["instruction"]===""){}
+    	var condensedPart=i["oldRoute"]+"_"+start[0]+"_"+end[0]+"_"+i["phoneNumber"]+"_"+i["orderNumber"]+"_"+dashedName+"5z1_"+dashedAddress
+
+      if (i["instruction"]===false){}
       else{
       	var instruction=i["instruction"].split(" ")
-        var dashedInstruction="5z2-"
+        var dashedInstruction="5z2_"
         for (var j of instruction){
         	dashedInstruction+=j
-          dashedInstruction+="-"
+          dashedInstruction+="_"
         }
         condensedPart+=dashedInstruction
       }
@@ -272,7 +301,6 @@ function DotCom() {
         console.log(routeData)
         console.log(coordinateComplete[4]["orderNumber"])
         if (routeData.results){
-          var order=routeData.results
           var newRoute=[]
           for (var h of routeData.results){
           	var newOne=[]
@@ -344,7 +372,6 @@ function DotCom() {
             <tbody>
               {console.log(manifestData)}
             {manifestData.map((i) => {
-              console.log(i)
               return(
                 <tr key={i.orderNumber}>
                   <td className="text">{i.oldRoute}</td>
@@ -386,8 +413,28 @@ function DotCom() {
       <div>
         <p className="text">Routing Tab</p>
         <div>
-          <button onClick={exportToPdf}>Download PDF</button>
-          <button onClick={qrToggle}>Show Giant QR Code</button>
+          <button className="red-button" onClick={exportToPdf}>
+            <div className="tooltip-wrap">
+              <img className="icon-image" src={pdf} alt="" />
+                <div className="tooltip-content">
+                  Download PDF of these results
+                </div>
+              </div>
+          </button>
+          <button onClick={qrToggle}>
+            <div className="tooltip-wrap">
+              <img className="icon-image" src={qrico} alt="" />
+                <div className="tooltip-content">
+                  Display GIANT QR code for driver
+                </div>
+              </div>
+            </button>
+          <button className="tooltip-wrap" onClick={() => {navigator.clipboard.writeText(newRouteLink)}}>
+            <img className="icon-image" src={copy} alt="" />
+            <div className="tooltip-content">
+              Copy Link
+            </div>
+          </button>
           {showQr ? (
           <div className="qr">
             <QRCode value={newRouteLink} size={512} />
@@ -400,6 +447,7 @@ function DotCom() {
                 <td className="text">Name</td>
                 <td className="text">Address</td>
                 <td className="text">Time Window</td>
+                <td className="text">Instruction</td>
                 <td className="text">Phone #</td>
                 <td className="text">ETA</td>
                 <td className="text">Order #</td>
@@ -413,7 +461,17 @@ function DotCom() {
                   <td>{i.name}</td>
                   <td><a href={"https://maps.google.com/?q=" + i.address}>{i.address}</a></td>
                   <td>{i.startTime} - {i.endTime}</td>
-                  <td>{i.phoneNumber}</td>
+                  <td className="text-center">
+                    {i.instruction ? (
+                      <div className="tooltip-wrap">
+                          <img className="information-image"src={info} alt="" />
+                          <div className="tooltip-content">
+                            {i.instruction}
+                          </div>
+                      </div>
+                    ) : null}
+                  </td>
+                  <td className="text-center"><a href={`tel:${i.phoneNumber}`}>{i.phoneNumber}</a></td>
                   <td>{i["ETA"]}</td>
                   <td>{i.orderNumber}</td>
                 </tr>

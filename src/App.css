@@ -61,7 +61,7 @@
 .tooltip-wrap .tooltip-content {
   display: none;
   position: absolute;
-  bottom: 5%;
+  bottom: 40px;
   left: 5%;
   right: 5%;
   background-color: #fff;
@@ -70,10 +70,36 @@
 }
 .tooltip-wrap:hover .tooltip-content {
   display: block;
+  background-color: rgb(154, 152, 152);
+}
+
+.tooltip2{
+  position: relative;
+}
+
+.tooltip2 .tooltip-content {
+  display: none;
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+  right: 5%;
+  background-color: #fff;
+  padding: .5em;
+  min-width: 10rem;
+}
+
+.tooltip-wrap:active .tooltip-active {
+  display: block;
+  background-color: rgb(154, 152, 152);
 }
 
 .information-image {
   height: 20px;
+  width: auto;
+}
+
+.icon-image {
+  height: 40px;
   width: auto;
 }
 
@@ -103,6 +129,9 @@
   color: white;
 }
 
+.red-button{
+  background-color: #ff7f7f;
+}
 
 .my-card {
   margin-left: auto;
