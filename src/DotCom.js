@@ -6,17 +6,34 @@ import info from "./img/info.png"
 import pdf from "./img/pdf.png"
 import qrico from "./img/qrico.png"
 import copy from "./img/copy.png"
+import homePin from "./img/home-pin.png"
+import pinPin from "./img/pin.png"
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from "leaflet";
+
+export const homeIcon = new L.Icon({
+  iconUrl: homePin,
+  iconSize: [30, 35],
+  iconAnchor: [15, 33],
+});
+
+export const pinIcon = new L.Icon({
+  iconUrl: pinPin,
+  iconSize: [30, 35],
+  iconAnchor: [15, 33],
+});
+
 
 
 function DotCom() {
   const [manifestBox, setManifestBox] = useState("");
   const [manifestData, setManifestData] = useState([{name:"pending...", address: "pending...", startTime: "pending...", endTime: "pending...", orderNumber: "pending..."}])
   const [routedData, setRoutedData] = useState([[{name:"Wait for it...", address: "", startTime: "", endTime: "", oldRoute: "", orderNumber: "pending...", coordinates:{lat:47.652690, lng:-122.688230}}]])
-  const [storeNumber, setStoreNumber] = useState("1508")
+  const [storeNumber, setStoreNumber] = useState(["1508", [47.5688609, -122.2879537]])
   const [initButton, setInitButton] = useState(true)
   const [newRouteLink, setNewRouteLink] = useState("http://localhost:4000/dotcom")
   const [showQr, setShowQr] = useState(false)
+  const [showMap, setShowMap] = useState(false)
   const [timeWindows, setTimeWindows] = useState(true)
   const [status, setStatus] = useState({"m":"Initialize", "color":"status-normal", "display":false})
 
@@ -81,7 +98,8 @@ function DotCom() {
 
   const handleStoreChange = (event) => {
     const store = event.target.value;
-    setStoreNumber(store);
+    const storeCoordinates = {"1508": [47.5688609,-122.2879537], "1143": [47.6901322,-122.3761618], "1142": [47.6787852, -122.1733922], "1798": [47.151927947998,-122.35523223877], "1680": [47.6527018,-122.6881439], "1803": [48.004510,-122.118270], "3545": [47.249360,-122.296190], "2645": [47.875460,-122.153910], "1624": [47.541620,-122.048290], "1966": [47.357130,-122.166860]}
+    setStoreNumber([store, storeCoordinates[store]]);
   };
 
 
@@ -283,7 +301,7 @@ function DotCom() {
       var offset = new Date().getTimezoneOffset();
       offset=offset/60
 
-      var routerLink="https://wps.hereapi.com/v8/findsequence2?departure="+year+"-"+month+"-"+day+"T"+beginTime+":00-0"+offset+":00"+"&mode=fastest;car;traffic:enabled&start="+storeNumber+";"+storeCoordinates[storeNumber]
+      var routerLink="https://wps.hereapi.com/v8/findsequence2?departure="+year+"-"+month+"-"+day+"T"+beginTime+":00-0"+offset+":00"+"&mode=fastest;car;traffic:enabled&start="+storeNumber[0]+";"+storeCoordinates[storeNumber[0]]
       var cnt=0
       for (var i of coordinateComplete){
         cnt+=1
@@ -296,7 +314,7 @@ function DotCom() {
         }
         routerLink+=stop
       }
-      routerLink=routerLink+"&end="+11177777484+";"+storeCoordinates[storeNumber]+"&improveFor=TIME"+"&apikey=DqS4NCThFlPj61WbL-TLX-hqnzz28loSxsvmZ4TCdoc"
+      routerLink=routerLink+"&end="+11177777484+";"+storeCoordinates[storeNumber[0]]+"&improveFor=TIME"+"&apikey=DqS4NCThFlPj61WbL-TLX-hqnzz28loSxsvmZ4TCdoc"
       console.log(routerLink)
 
       const routeResponse = await fetch(routerLink);
@@ -344,8 +362,13 @@ function DotCom() {
   }, [manifestBox]);
 
   function qrToggle(){
-    if (showQr===false){setShowQr(true)}
+    if (showQr===false){setShowQr(true); setShowMap(false)}
     else if (showQr===true){setShowQr(false)}
+  }
+
+  function mapToggle(){
+    if (showMap===false){setShowMap(true); setShowQr(false)}
+    else if (showMap===true){setShowMap(false)}
   }
 
 
@@ -383,7 +406,6 @@ function DotCom() {
               </tr>
             </thead>
             <tbody>
-              {console.log(manifestData)}
             {manifestData.map((i) => {
               return(
                 <tr key={i.orderNumber}>
@@ -401,7 +423,7 @@ function DotCom() {
         </div>
         <div className="center">
         <span className="text">Store Number:   </span>
-          <select value={storeNumber} onChange={handleStoreChange}>
+          <select value={storeNumber[0]} onChange={handleStoreChange}>
             {storeList.map((option) => (
               <option key={option} value={option}>{option}</option>
             ))}
@@ -434,6 +456,12 @@ function DotCom() {
                 </div>
               </div>
           </button>
+          <button className="tooltip-wrap" onClick={mapToggle}>
+            <img className="icon-image" src={homePin} alt="" />
+            <div className="tooltip-content">
+              Display Map
+            </div>
+          </button>
           <button onClick={qrToggle}>
             <div className="tooltip-wrap">
               <img className="icon-image" src={qrico} alt="" />
@@ -448,16 +476,27 @@ function DotCom() {
               Copy Link
             </div>
           </button>
-          {/* {status.display ? ( */}
+          {showMap ? (
             <div>
-            <MapContainer center={[47.000,-122.000]} zoom={13} style={{height: "500px", width: "100%"}}>
-            <TileLayer
-    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    attribution='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
-/>
-            </MapContainer>
+              <MapContainer center={storeNumber[1]} zoom={11} style={{height: "400px", width: "100%"}}>
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+                />
+                <Marker position={storeNumber[1]} icon={homeIcon}></Marker>
+                  {routedData[0].map((i) => {
+                    return (
+                        <Marker
+                          key={i["orderNumber"]}
+                          position={[i.coordinates["lat"], i.coordinates["lng"]]}
+                          icon={pinIcon}
+                        ></Marker>
+                    );
+                  })}
+
+              </MapContainer>
           </div>
-          {/* ) : null} */}
+          ) : null}
           {showQr ? (
           <div className="qr">
             <QRCode value={newRouteLink} size={512} />
