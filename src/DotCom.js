@@ -2,22 +2,23 @@ import React, { useState, useEffect } from "react";
 import JSpdf from "jspdf";
 import QRCode from "qrcode.react";
 import h2c from "html2canvas";
-import Tooltip from "react-tooltip";
 import info from "./img/info.png"
 import pdf from "./img/pdf.png"
 import qrico from "./img/qrico.png"
 import copy from "./img/copy.png"
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
 
 function DotCom() {
   const [manifestBox, setManifestBox] = useState("");
   const [manifestData, setManifestData] = useState([{name:"pending...", address: "pending...", startTime: "pending...", endTime: "pending...", orderNumber: "pending..."}])
-  const [routedData, setRoutedData] = useState([[{name:"Wait for it...", address: "", startTime: "", endTime: "", oldRoute: "", orderNumber: "pending..."}]])
+  const [routedData, setRoutedData] = useState([[{name:"Wait for it...", address: "", startTime: "", endTime: "", oldRoute: "", orderNumber: "pending...", coordinates:{lat:47.652690, lng:-122.688230}}]])
   const [storeNumber, setStoreNumber] = useState("1508")
   const [initButton, setInitButton] = useState(true)
   const [newRouteLink, setNewRouteLink] = useState("http://localhost:4000/dotcom")
   const [showQr, setShowQr] = useState(false)
   const [timeWindows, setTimeWindows] = useState(true)
+  const [status, setStatus] = useState({"m":"Initialize", "color":"status-normal", "display":false})
 
   function isNumeric(value) {
     return /^-?\d+$/.test(value);
@@ -85,6 +86,7 @@ function DotCom() {
 
 
   function processData(secret) {
+    setStatus({"m":"Awaitng Route Perameters", "color":"status-normal", "display":false})
     if (secret){
       var phone1508=[]
       const secretArray = secret.split("SIGNATURE");
@@ -249,6 +251,7 @@ function DotCom() {
 
   async function Route(){
     routeTab()
+    setStatus({"m":"Geolocating Data...", "color":"status-normal", "display":false})
     var coordinateManifest=manifestData
     var cnt=0
     var coordinateComplete=[]
@@ -267,6 +270,7 @@ function DotCom() {
     }
     console.log(coordinateComplete)
     if (cnt===coordinateManifest.length){
+      setStatus({"m":"Routing data...", "color":"status-normal", "display":false})
 
       const storeCoordinates = {"1508": "47.5688609,-122.2879537", "1143": "47.6901322,-122.3761618", "1142": "47.6787852, -122.1733922", "1798": "47.151927947998,-122.35523223877", "1680": "47.6527018,-122.6881439", "1803": "48.004510,-122.118270", "3545": "47.249360,-122.296190", "2645": "47.875460,-122.153910", "1624": "47.541620,-122.048290", "1966": "47.357130,-122.166860"}
 
@@ -300,26 +304,34 @@ function DotCom() {
         const routeData = await routeResponse.json();
         console.log(routeData)
         console.log(coordinateComplete[4]["orderNumber"])
-        if (routeData.results){
+        if (routeData.results[0]?.waypoints){
           var newRoute=[]
           for (var h of routeData.results){
           	var newOne=[]
             for (var i of h["waypoints"])
               for (var j of coordinateComplete){
                 if (i["id"]===j["orderNumber"]){
-                  var splitETA=i["estimatedArrival"].split("T")
-                  var splitETA2=splitETA[1].split(":")
-                  j["ETA"]=splitETA2[0]+":"+splitETA2[1]
+                  console.log(i["estimatedArrival"])
+                  if (i["sequence"]===1){
+                    j["ETA"]=j["startTime"]
+                  }
+                  else{
+                    var splitETA=i["estimatedArrival"].split("T")
+                    var splitETA2=splitETA[1].split(":")
+                    j["ETA"]=splitETA2[0]+":"+splitETA2[1]
+                  }
                   newOne.push(j)
                 }
               }
               newRoute.push(newOne)
             }
           console.log(newRoute)
+          setStatus({"m":"Success!", "color":"status-green", "display":true})
           setRoutedData(newRoute)
           //link maker for qr code
           condenseLink(newRoute)
         }
+        else{setStatus({"m":"An Error occored: Try deselecting time windows", "color":"status-red"})}
       }
 
     }
@@ -342,6 +354,7 @@ function DotCom() {
       <div className="center">
         <button onClick={initTab}>Initialize Tab</button>
         <button onClick={routeTab}>Routed Tab</button>
+        <span className={status.color}> Status: {status.m}</span>
       </div>
       {initButton ? (
         <div>
@@ -435,6 +448,16 @@ function DotCom() {
               Copy Link
             </div>
           </button>
+          {/* {status.display ? ( */}
+            <div>
+            <MapContainer center={[47.000,-122.000]} zoom={13} style={{height: "500px", width: "100%"}}>
+            <TileLayer
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    attribution='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+/>
+            </MapContainer>
+          </div>
+          {/* ) : null} */}
           {showQr ? (
           <div className="qr">
             <QRCode value={newRouteLink} size={512} />

@@ -166,3 +166,20 @@ footer a {
 footer a:hover {
   text-decoration: rgb(255, 255, 255);
 }
+.status-green{
+  text-align: center;
+  color: white;
+  background-color: #01b331;
+}
+
+.status-red{
+  text-align: center;
+  color: white;
+  background-color: rgb(205, 0, 0);
+}
+
+.status-normal{
+  text-align: center;
+  color: white;
+  background-color: rgb(0, 0, 147);
+}
