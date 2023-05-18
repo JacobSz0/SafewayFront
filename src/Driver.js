@@ -13,6 +13,7 @@ import pinPin from "./img/pin.png"
 import mapIcon from "./img/map.png"
 import deleteIcon from "./img/Delete.png"
 import plusIcon from "./img/plus.png"
+import imageIcon from "./img/imageIcon.png"
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from "leaflet";
 import { Tooltip } from "react-leaflet";
