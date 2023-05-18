@@ -8,8 +8,11 @@ function Nav() {
         <NavLink className="nav-main" to="/">
           Main
         </NavLink>
-        <NavLink className="nav-link" to="/dotcom">
-          DotCom
+        <NavLink className="nav-redirect" to="/dotcom">
+          <h5>DotCom</h5>
+        </NavLink>
+        <NavLink className="nav-redirect" to="/driver">
+          <h5>Driver</h5>
         </NavLink>
 
       </div>

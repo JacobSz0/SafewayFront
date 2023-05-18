@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+.nav-redirect{
+  color: rgb(115, 3, 150);
+}
+
 .nav-bar-green{
   background-image: linear-gradient(to right top, #569e67, #519561, #4c8d5c, #478456, #427c51);
 }

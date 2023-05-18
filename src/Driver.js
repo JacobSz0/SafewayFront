@@ -12,6 +12,7 @@ import homePin from "./img/home-pin.png"
 import pinPin from "./img/pin.png"
 import mapIcon from "./img/map.png"
 import deleteIcon from "./img/Delete.png"
+import plusIcon from "./img/plus.png"
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from "leaflet";
 import { Tooltip } from "react-leaflet";
@@ -423,7 +424,7 @@ function Driver() {
       <button onClick={helpfulSwitch}>Helpful tips</button>
       <input className="text" type="file" onChange={onFileChange} />
       {helpfulTips ? (
-      <p className="text">When uploading image, please make sure the paper is as clear, as well-lit, and as flat as possible. Please wait until the text is loaded before adding another image. Please make sure the pages are in order otherwise the Route ID will be incorrect. For mobile users: It is recommended that you turn your device horizontal for easy viewing/editing of data. MOST IMPORTANTLY: Please check to verify the data is correct! Image to text conversion will never be perfect. So always, always, always check before routing.</p>
+      <p className="text">When uploading image, please make sure the paper is as clear, as well-lit, and as flat as possible. Please wait until the text is loaded before adding another image. Please make sure the pages are in order otherwise the Route ID will be incorrect. For mobile users: It is recommended that you turn your device horizontal for easy viewing/editing of data. Unfortunatly, .PNG seems to be the only file type accepted. I will fix this in a future update. MOST IMPORTANTLY: Please check to verify the data is correct! Image to text conversion will never be perfect. So always, always, always check before routing.</p>
       ) : null}
       <div style={{ marginTop: 10 }}>
         <input type="button" value="Convert" onClick={processImage} />
@@ -471,7 +472,7 @@ function Driver() {
         ))}
       </tbody>
     </table>
-    <button onClick={handleAddEntry}>Manually Add Stop</button>
+    <button onClick={handleAddEntry}><img className="icon-image" src={plusIcon}></img></button>
   </div>
     <div className="center">
       <span className="text">Store Number:   </span>

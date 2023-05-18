@@ -4,7 +4,6 @@ import Nav from "./Nav.js";
 import MainPage from "./MainPage.js";
 import DotCom from "./DotCom.js";
 import Driver from "./Driver.js";
-import Driver2 from "./Driver2.js";
 import Foot from "./Foot.js";
 import React from 'react';
 
@@ -21,7 +20,6 @@ function App() {
             <Route path="/" element={<MainPage />} />
             <Route path="/dotcom" element={<DotCom />} />
             <Route path="/driver" element={<Driver />} />
-            <Route path="/driver2" element={<Driver2 />} />
           </Routes>
         </div>
         <Foot/>

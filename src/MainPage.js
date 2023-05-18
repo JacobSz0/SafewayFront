@@ -4,6 +4,7 @@ import QRCode from "qrcode.react";
 import h2c from "html2canvas";
 import Tooltip from "react-tooltip";
 import info from "./img/info.png"
+import { NavLink } from "react-router-dom";
 
 function MainPage() {
 
@@ -62,7 +63,8 @@ function MainPage() {
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
       const encodedData = urlParams.get('data');
-      if (encodedData!==[]){
+      console.log(encodedData)
+      if (encodedData!==null){
         setMain(false)
         const decodedData = decodeURIComponent(encodedData);
         var splittedData = decodedData.split("5z3")
@@ -142,9 +144,12 @@ function MainPage() {
         <br></br>
         <br></br>
         <br></br>
-        <br></br>
-        <br></br>
-        <br></br>
+        <NavLink className="text" to="/dotcom">
+        <h2>DotCom</h2>
+        </NavLink>
+        <NavLink className="text" to="/driver">
+          <h2>Driver</h2>
+        </NavLink>
         <br></br>
         <br></br>
         <br></br>
