@@ -1,0 +1,29 @@
+/* Textbox sizes */
+.oldRoute{
+  width: 60px;
+}
+
+.name{
+  width: 160px;
+}
+
+.address{
+  width: 250px;
+}
+
+.timeWindow{
+  width: 75px;
+}
+
+.phoneNumber{
+  width: 95px;
+}
+
+.orderNumber{
+  width: 80px;
+}
+
+.deleteImage{
+  height: 25px;
+  width: auto;
+}

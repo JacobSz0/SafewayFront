@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import Tesseract from "tesseract.js";
+import "./Driver.css"
 import JSpdf from "jspdf";
 import QRCode from "qrcode.react";
 import h2c from "html2canvas";
@@ -9,28 +11,29 @@ import copy from "./img/copy.png"
 import homePin from "./img/home-pin.png"
 import pinPin from "./img/pin.png"
 import mapIcon from "./img/map.png"
+import deleteIcon from "./img/Delete.png"
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from "leaflet";
 import { Tooltip } from "react-leaflet";
 
 export const homeIcon = new L.Icon({
-  iconUrl: homePin,
-  iconSize: [30, 35],
-  iconAnchor: [15, 33],
+    iconUrl: homePin,
+    iconSize: [30, 35],
+    iconAnchor: [15, 33],
 
-});
+  });
 
-export const pinIcon = new L.Icon({
-  iconUrl: pinPin,
-  iconSize: [30, 35],
-  iconAnchor: [15, 33],
-});
+  export const pinIcon = new L.Icon({
+    iconUrl: pinPin,
+    iconSize: [30, 35],
+    iconAnchor: [15, 33],
+  });
 
 
-
-function DotCom() {
-  const [manifestBox, setManifestBox] = useState("");
-  const [manifestData, setManifestData] = useState([{name:"pending...", address: "pending...", startTime: "pending...", endTime: "pending...", orderNumber: "pending..."}])
+function Driver() {
+  const [file, setFile] = useState();
+  const [progress, setProgress] = useState(0);
+  const [typingData, setTypingData] = useState([]);
   const [routedData, setRoutedData] = useState([[{name:"Wait for it...", address: "", startTime: "", endTime: "", oldRoute: "", orderNumber: "pending...", coordinates:{lat:47.652690, lng:-122.688230}}]])
   const [storeNumber, setStoreNumber] = useState(["1508", [47.5688609, -122.2879537]])
   const [initButton, setInitButton] = useState(true)
@@ -39,6 +42,30 @@ function DotCom() {
   const [showMap, setShowMap] = useState(false)
   const [timeWindows, setTimeWindows] = useState(true)
   const [status, setStatus] = useState({"m":"Initialize", "color":"status-normal", "display":false})
+  const [helpfulTips, setHelpfulTips] = useState(false)
+
+  const storeList=["1142", "1143", "1508", "1624", "1680", "1798", "1803", "1966", "2645", "3545"]
+
+  const handleDataChange = (index, event) => {
+    const { name, value } = event.target;
+    const updatedData = [...typingData];
+    updatedData[index][name] = value;
+    setTypingData(updatedData);
+  };
+
+  const handleDeleteEntry = (index) => {
+    const toBeDeleted = [...typingData]
+    toBeDeleted.splice(index, 1)
+    setTypingData(toBeDeleted);
+  };
+
+  const handleAddEntry = () => {
+    setTypingData([...typingData, {}]);
+  };
+
+  function isExclusivelyNumeric(value) {
+    return /^-?\d+$/.test(value);
+  }
 
   function isNumeric(value) {
     return /\d/.test(value);
@@ -52,6 +79,24 @@ function DotCom() {
     setInitButton(true)
   }
 
+  function helpfulSwitch(){
+    if (helpfulTips===true){setHelpfulTips(false)}
+    else{setHelpfulTips(true)}
+  }
+
+  function deleteItem(index){
+    var toBeDeleted=typingData
+    toBeDeleted.splice(index, 1)
+    console.log(toBeDeleted)
+    setTypingData(toBeDeleted)
+  }
+
+  const handleStoreChange = (event) => {
+    const store = event.target.value;
+    const storeCoordinates = {"1508": [47.5688609,-122.2879537], "1143": [47.6901322,-122.3761618], "1142": [47.6787852, -122.1733922], "1798": [47.151927947998,-122.35523223877], "1680": [47.6527018,-122.6881439], "1803": [48.004510,-122.118270], "3545": [47.249360,-122.296190], "2645": [47.875460,-122.153910], "1624": [47.541620,-122.048290], "1966": [47.357130,-122.166860]}
+    setStoreNumber([store, storeCoordinates[store]]);
+  };
+
   function handleTimeWindowsChange(){
     if (timeWindows===true){
       setTimeWindows(false)
@@ -60,6 +105,116 @@ function DotCom() {
       setTimeWindows(true)
     }
   }
+
+  function qrToggle(){
+    if (showQr===false){setShowQr(true); setShowMap(false)}
+    else if (showQr===true){setShowQr(false)}
+  }
+
+  function mapToggle(){
+    if (showMap===false){setShowMap(true); setShowQr(false)}
+    else if (showMap===true){setShowMap(false)}
+  }
+
+  const numberIcon = (number) => {
+    return L.divIcon({
+      html: `<div>${number}</div>`,
+      iconUrl: homePin,
+      iconSize: [16, 20],
+      iconAnchor: [0, 0],
+    });
+  };
+
+  function decipherText(secret){
+    var secretArray=secret.split("SIGNATURE")
+    console.log(secretArray)
+    var secretArray2=typingData
+    for (var i of secretArray){
+       var spaceSplits = i.split("\n").join(" ").split(" ")
+
+       var addressBool=false
+       var instructionBool=false
+       var name=""
+       var address=""
+       var instruction=""
+       var phoneNumber=""
+       var orderNumber=""
+       var is1508=false
+       var cnt=0
+       for (let j = 0; j < spaceSplits.length; j++) {
+        if (spaceSplits[j]==="FLEET" || spaceSplits[j]==="VAN"){
+            var fleetVan=spaceSplits[j+1]
+            var routeCnt=0
+        }
+
+        if (spaceSplits[j]==="|" || spaceSplits[j]==="}" || spaceSplits[j]==="{" || spaceSplits[j]==="i" || spaceSplits[j]==="l" || spaceSplits[j]==="/" || spaceSplits[j]==="=" || spaceSplits[j]==="`" || spaceSplits[j]==="’" || spaceSplits[j]==="'"){
+            spaceSplits.splice(j, 1);  // Removes characters we don't like
+        }
+       }
+       for (let j = 0; j < spaceSplits.length; j++) {
+         if (spaceSplits[j]==="ORDER" && isNumeric(spaceSplits[j+1])){
+            orderNumber=spaceSplits[j+1]
+            name=spaceSplits[j-3]+" "+spaceSplits[j-2]+" "+spaceSplits[j-1]
+         }
+         if (spaceSplits[j]==="WINDOW:"){
+            var startTime=spaceSplits[j+1]+" "+spaceSplits[j+2]
+            var endTime=spaceSplits[j+4]+" "+spaceSplits[j+5]
+        }
+         if (spaceSplits[j-6]==="WINDOW:"){
+            addressBool=true
+
+         }
+         if (spaceSplits[j]==="RESTRICTED"){
+            addressBool=false
+         }
+         if (addressBool===true){
+            cnt+=1
+            if (cnt>3 && isExclusivelyNumeric(spaceSplits[j+1]) && spaceSplits[j+1].length===5){
+                console.log("ZIPCODE!!!")
+                address+="WA, "+spaceSplits[j+1]
+                addressBool=false
+            }
+            else{address+=spaceSplits[j]+" "}
+         }
+
+         if (spaceSplits[j].length===10 && isExclusivelyNumeric(spaceSplits[j])){
+            phoneNumber=spaceSplits[j]
+         }
+
+         if (spaceSplits[j-1]==="NOTES"){
+            instructionBool=true
+         }
+         if (spaceSplits[j]==="CUSTOMER"){
+            instructionBool=false
+         }
+         if (instructionBool===true){
+            instruction+=spaceSplits[j]+" "
+         }
+
+       }
+        routeCnt+=1
+        var secretObj={}
+        secretObj["oldRoute"]=fleetVan+"-00"+routeCnt
+        secretObj["startTime"]=startTime
+        secretObj["endTime"]=endTime
+        secretObj["name"]=name
+        secretObj["address"]=address
+        if (instruction===""){
+        secretObj["instruction"]=false
+        }
+        else{
+        secretObj["instruction"]=instruction
+        }
+        secretObj["phoneNumber"]=phoneNumber
+        secretObj["orderNumber"]=orderNumber
+        if (orderNumber!==""){
+          secretArray2.push(secretObj)
+        }
+    }
+    console.log(secretArray2)
+    setTypingData(secretArray2)
+  }
+
 
   function exportToPdf() {
     let elem = document.getElementById("toRender");
@@ -92,134 +247,24 @@ function DotCom() {
     });
   };
 
-
-  const handleManifestChange = (event) => {
-    const value = event.target.value;
-    processData(value)
-    setManifestBox(value);
+  const onFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
 
-  const handleStoreChange = (event) => {
-    const store = event.target.value;
-    const storeCoordinates = {"1508": [47.5688609,-122.2879537], "1143": [47.6901322,-122.3761618], "1142": [47.6787852, -122.1733922], "1798": [47.151927947998,-122.35523223877], "1680": [47.6527018,-122.6881439], "1803": [48.004510,-122.118270], "3545": [47.249360,-122.296190], "2645": [47.875460,-122.153910], "1624": [47.541620,-122.048290], "1966": [47.357130,-122.166860]}
-    setStoreNumber([store, storeCoordinates[store]]);
+  const processImage = () => {
+    setStatus({"m":"Processing Image...", "color":"status-normal", "display":false})
+    setProgress(0);
+    Tesseract.recognize(file, "eng", {
+      logger: (m) => {
+        if (m.status === "recognizing text") {
+          setProgress(m.progress);
+        }
+      },
+    }).then(({ data: { text } }) => {
+        setStatus({"m":"Succesfully Converted Image", "color":"status-green", "display":false})
+      decipherText(text)
+    });
   };
-
-
-  function processData(secret) {
-    setStatus({"m":"Awaitng Route Perameters", "color":"status-normal", "display":false})
-    if (secret){
-      var phone1508=[]
-      const secretArray = secret.split("SIGNATURE");
-      var secretArray2=[]
-      for (var i of secretArray){
-        var newd = i.split(" ");
-        var nameBool=false
-        var addressBool=false
-        var instructionBool=false
-        var name=""
-        var address=""
-        var instruction=""
-        var phoneNumber=""
-        var orderNumber=""
-        var is1508=false
-        var cnt=0
-        for (let j = 0; j < newd.length; j++) {
-          if (newd[j]==="001"){
-            var routeLetter=newd[j-11]
-          }
-          if (newd[j] === "WINDOW:"){
-            var startTime=newd[j+1]+" "+newd[j+2]
-            var endTime=newd[j+4]+" "+newd[j+5]
-            var oldRoute=routeLetter+"-"+newd[j-1]
-          }
-          if (newd[j] === "TIME:"){nameBool=true}
-          if (nameBool===true && isNumeric(newd[j])===true){
-            nameBool=false
-            addressBool=true
-            cnt=0}
-          if (nameBool===true && isNumeric(newd[j])===false){
-          cnt+=1
-            if (cnt>2){name+=" "}
-            if (cnt>1){name+=newd[j]}
-          }
-
-          if (newd[j+1]==="INSTRUCTIONS:"){
-            is1508=true
-            addressBool=false
-          }
-          if (newd[j-1]==="INSTRUCTIONS:"){
-            instructionBool=true
-            cnt=1
-          }
-          if (newd[j]==="ORDER"){
-            orderNumber=newd[j+1]
-          }
-          if (newd[j+3]==="ORDER" && !is1508){
-            addressBool=false;
-            address+=" "
-            address+=newd[j+1]
-            phoneNumber=newd[j+2]
-            orderNumber=newd[j+4]
-          }
-          if (addressBool===true){
-            cnt+=1
-            if (cnt>1){address+=" "}
-            address+=newd[j]
-          }
-          if (newd[j]==="INSTRUCTIONS"){
-          instructionBool=true;
-          cnt=0}
-          if (newd[j]==="DRIVER"){
-          instructionBool=false
-          }
-          if (instructionBool===true){
-            cnt+=1
-            if (cnt>2){instruction+=" "}
-            if (cnt>1){instruction+=newd[j]} ;
-          }
-          //phone number formatted badly at 1508. This is the fix
-          if (newd[j].length===10 && isNumeric(newd[j])===true && instructionBool===false){
-            phone1508.push(newd[j])
-          }
-        }
-        if (address!==""){
-          var secretObj={}
-          secretObj["oldRoute"]=oldRoute
-          secretObj["startTime"]=startTime
-          secretObj["endTime"]=endTime
-          secretObj["name"]=name
-          secretObj["address"]=address
-          if (instruction===""){
-            secretObj["instruction"]=false
-          }
-          else{
-            secretObj["instruction"]=instruction
-          }
-          secretObj["phoneNumber"]=phoneNumber
-          secretObj["orderNumber"]=orderNumber
-          secretArray2.push(secretObj)
-        }
-      }
-      if (is1508===true){
-        var phoneOffset=0
-        for (let i = 0; i < secretArray2.length; i++) {
-          var modulo=i+1
-          if (modulo%9!==0){
-            secretArray2[i]["phoneNumber"]=phone1508[phoneOffset]
-            phoneOffset+=1
-          }
-          else{
-            secretArray2[i]["phoneNumber"]="ErrorCode:1508"
-          }
-        }
-      }
-      console.log(secretArray2)
-      console.log(is1508)
-      console.log(storeNumber)
-      setManifestData(secretArray2)
-    }
-  }
 
   const convertTime = timeStr => {
     const [time, modifier] = timeStr.split(' ');
@@ -271,10 +316,11 @@ function DotCom() {
     setNewRouteLink(condensedLink)
   }
 
+
   async function Route(){
     routeTab()
     setStatus({"m":"Geolocating Data...", "color":"status-normal", "display":false})
-    var coordinateManifest=manifestData
+    var coordinateManifest=typingData
     var cnt=0
     var coordinateComplete=[]
     for (var i of coordinateManifest){
@@ -347,7 +393,7 @@ function DotCom() {
               newRoute.push(newOne)
             }
           console.log(newRoute)
-          setStatus({"m":"Success!", "color":"status-green", "display":true})
+          setStatus({"m":"Routing Success!", "color":"status-green", "display":true})
           setRoutedData(newRoute)
           //link maker for qr code
           condenseLink(newRoute)
@@ -358,105 +404,99 @@ function DotCom() {
     }
   }
 
-  const storeList=["1142", "1143", "1508", "1624", "1680", "1798", "1803", "1966", "2645", "3545"]
-
-  const numberIcon = (number) => {
-    return L.divIcon({
-      html: `<div>${number}</div>`,
-      iconUrl: homePin,
-      iconSize: [16, 20],
-      iconAnchor: [0, 0],
-    });
-  };
 
   useEffect(() => {
-    processData()
-  }, [manifestBox]);
 
-  function qrToggle(){
-    if (showQr===false){setShowQr(true); setShowMap(false)}
-    else if (showQr===true){setShowQr(false)}
-  }
-
-  function mapToggle(){
-    if (showMap===false){setShowMap(true); setShowQr(false)}
-    else if (showMap===true){setShowMap(false)}
-  }
+  }, [typingData]);
 
 
   return (
+    <>
+    <div className="center">
+      <button onClick={initTab}>Initialize Tab</button>
+      <button onClick={routeTab}>Routed Tab</button>
+      <span className={status.color}> Status: {status.m}</span>
+    </div>
+    {initButton ? (
     <div>
-      <div className="center">
-        <button onClick={initTab}>Initialize Tab</button>
-        <button onClick={routeTab}>Routed Tab</button>
-        <span className={status.color}> Status: {status.m}</span>
-      </div>
-      {initButton ? (
-        <div>
-        <div>
-          <span className="text">Please highlight the ENTIRE manifest and paste it into here. </span>
-          <span className="text">Be sure to press Enter in the text box before adding another manifest. </span>
-          <span className="text">This data only exsits in your browser. If you refresh the browser, your progress will be lost. </span>
-        </div>
-        <div className="textarea">
-          <textarea rows={5}
-            cols={50}
-            onChange={handleManifestChange}
-            value={manifestBox}>
-          </textarea>
-        </div>
-        <div>
-          <table className="table">
-            <thead>
-              <tr>
-                <td className="text">Route ID</td>
-                <td className="text">Name</td>
-                <td className="text">Address</td>
-                <td className="text">Time Window</td>
-                <td className="text">Phone #</td>
-                <td className="text">Order #</td>
-              </tr>
-            </thead>
-            <tbody>
-            {manifestData.map((i) => {
-              return(
-                <tr key={i.orderNumber}>
-                  <td className="text">{i.oldRoute}</td>
-                  <td className="text">{i.name}</td>
-                  <td><a className="text" href={"https://maps.google.com/?q=" + i.address}>{i.address}</a></td>
-                  <td className="text">{i.startTime} - {i.endTime}</td>
-                  <td className="text">{i.phoneNumber}</td>
-                  <td className="text">{i.orderNumber}</td>
-                </tr>
-              )
-            })}
-            </tbody>
-          </table>
-        </div>
-        <div className="center">
-        <span className="text">Store Number:   </span>
-          <select value={storeNumber[0]} onChange={handleStoreChange}>
-            {storeList.map((option) => (
-              <option key={option} value={option}>{option}</option>
-            ))}
-          </select>
-          <span>--</span>
-          <label className="text">
-            Time Windows Included?....
-            <input
-              type="checkbox"
-              checked={timeWindows}
-              onChange={handleTimeWindowsChange}
-            />
-          </label>
-          <span>--</span>
-          <button onClick={Route}>ROUTE!</button>
-        </div>
-        </div>
+    <div className="App">
+      <button onClick={helpfulSwitch}>Helpful tips</button>
+      <input className="text" type="file" onChange={onFileChange} />
+      {helpfulTips ? (
+      <p className="text">When uploading image, please make sure the paper is as clear, as well-lit, and as flat as possible. Please wait until the text is loaded before adding another image. Please make sure the pages are in order otherwise the Route ID will be incorrect. For mobile users: It is recommended that you turn your device horizontal for easy viewing/editing of data. MOST IMPORTANTLY: Please check to verify the data is correct! Image to text conversion will never be perfect. So always, always, always check before routing.</p>
       ) : null}
+      <div style={{ marginTop: 10 }}>
+        <input type="button" value="Convert" onClick={processImage} />
+      </div>
+      <div>
+        <progress value={progress} max={1} />
+      </div>
+    </div>
+    <div>
+    <table className="table">
+      <thead>
+        <tr>
+          <td className="text">Route ID</td>
+          <td className="text">Name</td>
+          <td className="text">Address</td>
+          <td className="text">Time Window</td>
+          <td className="text">Phone #</td>
+          <td className="text">Order #</td>
+        </tr>
+      </thead>
+      <tbody>
+        {typingData.map((data, index) => (
+          <tr key={index}>
+            <td>
+              <input className="oldRoute" name="oldRoute" value={data.oldRoute || ""} onChange={(e) => handleDataChange(index, e)} />
+            </td>
+            <td>
+              <input className="name" name="name" value={data.name || ""} onChange={(e) => handleDataChange(index, e)} />
+            </td>
+            <td>
+              <input className="address" name="address" value={data.address || ""} onChange={(e) => handleDataChange(index, e)} />
+            </td>
+            <td className="text">
+              <input className="timeWindow" name="startTime" value={data.startTime || ""} onChange={(e) => handleDataChange(index, e)} />
+              <input className="timeWindow" name="endTime" value={data.endTime || ""} onChange={(e) => handleDataChange(index, e)} />
+            </td>
+            <td>
+              <input className="phoneNumber" name="phoneNumber" value={data.phoneNumber || ""} onChange={(e) => handleDataChange(index, e)} />
+            </td>
+            <td>
+              <input className="orderNumber" name="orderNumber" value={data.orderNumber || ""} onChange={(e) => handleDataChange(index, e)} />
+            </td>
+            <td><button onClick={() => handleDeleteEntry(index)}><img className="deleteImage" src={deleteIcon}></img></button></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <button onClick={handleAddEntry}>Manually Add Stop</button>
+  </div>
+    <div className="center">
+      <span className="text">Store Number:   </span>
+        <select value={storeNumber[0]} onChange={handleStoreChange}>
+        {storeList.map((option) => (
+            <option key={option} value={option}>{option}</option>
+        ))}
+        </select>
+        <span>--</span>
+        <label className="text">
+        Time Windows Included?....
+        <input
+            type="checkbox"
+            checked={timeWindows}
+            onChange={handleTimeWindowsChange}
+        />
+        </label>
+        <span>--</span>
+        <button onClick={Route}>ROUTE!</button>
+    </div>
+  </div>
+  ) : null}
 
 
-      {!initButton ? (
+  {!initButton ? (
       <div>
         <p className="text">Routing Tab</p>
         <div>
@@ -556,8 +596,8 @@ function DotCom() {
         </div>
       </div>
       ) : null}
-    </div>
+  </>
   );
-};
+}
 
-export default DotCom;
+export default Driver;
