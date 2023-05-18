@@ -85,13 +85,6 @@ function Driver() {
     else{setHelpfulTips(true)}
   }
 
-  function deleteItem(index){
-    var toBeDeleted=typingData
-    toBeDeleted.splice(index, 1)
-    console.log(toBeDeleted)
-    setTypingData(toBeDeleted)
-  }
-
   const handleStoreChange = (event) => {
     const store = event.target.value;
     const storeCoordinates = {"1508": [47.5688609,-122.2879537], "1143": [47.6901322,-122.3761618], "1142": [47.6787852, -122.1733922], "1798": [47.151927947998,-122.35523223877], "1680": [47.6527018,-122.6881439], "1803": [48.004510,-122.118270], "3545": [47.249360,-122.296190], "2645": [47.875460,-122.153910], "1624": [47.541620,-122.048290], "1966": [47.357130,-122.166860]}
@@ -171,7 +164,6 @@ function Driver() {
          if (addressBool===true){
             cnt+=1
             if (cnt>3 && isExclusivelyNumeric(spaceSplits[j+1]) && spaceSplits[j+1].length===5){
-                console.log("ZIPCODE!!!")
                 address+="WA, "+spaceSplits[j+1]
                 addressBool=false
             }
@@ -252,19 +244,65 @@ function Driver() {
     setFile(e.target.files[0]);
   };
 
+  const convertToPng = (file) => {
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+      const img = new Image();
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        const context = canvas.getContext('2d');
+        context.drawImage(img, 0, 0);
+
+        canvas.toBlob((blob) => {
+          const pngFile = new File([blob], 'converted.png', { type: 'image/png' });
+          console.log(pngFile)
+          setStatus({"m":"Converting to Text...", "color":"status-normal", "display":false})
+          Tesseract.recognize(pngFile, "eng", {
+            logger: (m) => {
+                if (m.status === "recognizing text") {
+                setProgress(m.progress);
+                }
+            },
+            }).then(({ data: { text } }) => {
+                setStatus({"m":"Succesfully Converted Image", "color":"status-green", "display":false})
+            decipherText(text)
+            });
+          // Use the `pngFile` for further processing, such as sending it to the server or displaying it in the UI
+        }, 'image/png');
+      };
+
+      img.src = event.target.result;
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+
   const processImage = () => {
     setStatus({"m":"Processing Image...", "color":"status-normal", "display":false})
     setProgress(0);
-    Tesseract.recognize(file, "eng", {
-      logger: (m) => {
-        if (m.status === "recognizing text") {
-          setProgress(m.progress);
-        }
-      },
-    }).then(({ data: { text } }) => {
-        setStatus({"m":"Succesfully Converted Image", "color":"status-green", "display":false})
-      decipherText(text)
-    });
+    console.log(file)
+    if (file.type!=="image/png"){
+        console.log("Convert to PNG")
+        setStatus({"m":"Converting to PNG format...", "color":"status-normal", "display":false})
+        convertToPng(file)
+    }
+    else{
+        Tesseract.recognize(file, "eng", {
+        logger: (m) => {
+            if (m.status === "recognizing text") {
+            setProgress(m.progress);
+            }
+        },
+        }).then(({ data: { text } }) => {
+            setStatus({"m":"Succesfully Converted Image", "color":"status-green", "display":false})
+        decipherText(text)
+        });
+    }
   };
 
   const convertTime = timeStr => {
@@ -424,7 +462,7 @@ function Driver() {
       <button onClick={helpfulSwitch}>Helpful tips</button>
       <input className="text" type="file" onChange={onFileChange} />
       {helpfulTips ? (
-      <p className="text">When uploading image, please make sure the paper is as clear, as well-lit, and as flat as possible. Please wait until the text is loaded before adding another image. Please make sure the pages are in order otherwise the Route ID will be incorrect. For mobile users: It is recommended that you turn your device horizontal for easy viewing/editing of data. Unfortunatly, .PNG seems to be the only file type accepted. I will fix this in a future update. MOST IMPORTANTLY: Please check to verify the data is correct! Image to text conversion will never be perfect. So always, always, always check before routing.</p>
+      <p className="text">When uploading image, please make sure the paper is as clear, as well-lit, and as flat as possible. Please wait until the text is loaded before adding another image. Please make sure the pages are in order otherwise the Route ID will be incorrect. For mobile users: It is recommended that you turn your device horizontal for easy viewing/editing of data. Unfortunatly, .PNG files preferred. Some images may not be accepted. Please reload page if any errors occor. MOST IMPORTANTLY: Please check to verify the data is correct! Image to text conversion will never be perfect. So always, always, always check before routing.</p>
       ) : null}
       <div style={{ marginTop: 10 }}>
         <input type="button" value="Convert" onClick={processImage} />
