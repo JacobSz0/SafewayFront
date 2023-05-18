@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/SafewayFront/static/css/main.f0d2bd4f.css",
-    "main.js": "/SafewayFront/static/js/main.677df83e.js",
+    "main.js": "/SafewayFront/static/js/main.321afe8c.js",
     "static/js/703.a8993049.chunk.js": "/SafewayFront/static/js/703.a8993049.chunk.js",
     "static/js/598.109f48f0.chunk.js": "/SafewayFront/static/js/598.109f48f0.chunk.js",
     "static/js/787.eaa684dd.chunk.js": "/SafewayFront/static/js/787.eaa684dd.chunk.js",
@@ -9,16 +9,17 @@
     "static/media/plus.png": "/SafewayFront/static/media/plus.266fb9f99041af028060.png",
     "static/media/Delete.png": "/SafewayFront/static/media/Delete.87200934d68cc0db6af8.png",
     "static/media/map.png": "/SafewayFront/static/media/map.82056140ce3605dfbf34.png",
+    "static/media/imageIcon.png": "/SafewayFront/static/media/imageIcon.2e348a057dd8cb4a2027.png",
     "static/media/pin.png": "/SafewayFront/static/media/pin.e6e2a35e2c2c9d0d33ed.png",
     "index.html": "/SafewayFront/index.html",
     "main.f0d2bd4f.css.map": "/SafewayFront/static/css/main.f0d2bd4f.css.map",
-    "main.677df83e.js.map": "/SafewayFront/static/js/main.677df83e.js.map",
+    "main.321afe8c.js.map": "/SafewayFront/static/js/main.321afe8c.js.map",
     "703.a8993049.chunk.js.map": "/SafewayFront/static/js/703.a8993049.chunk.js.map",
     "598.109f48f0.chunk.js.map": "/SafewayFront/static/js/598.109f48f0.chunk.js.map",
     "787.eaa684dd.chunk.js.map": "/SafewayFront/static/js/787.eaa684dd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f0d2bd4f.css",
-    "static/js/main.677df83e.js"
+    "static/js/main.321afe8c.js"
   ]
 }
