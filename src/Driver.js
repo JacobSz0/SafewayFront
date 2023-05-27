@@ -45,8 +45,9 @@ function Driver() {
   const [timeWindows, setTimeWindows] = useState(true)
   const [status, setStatus] = useState({"m":"Initialize", "color":"status-normal", "display":false})
   const [helpfulTips, setHelpfulTips] = useState(false)
+  const [timePreset] = useState(["", "8-12", "12-4", "1-5", "5-9", "6-10"])
 
-  const storeList=["1142", "1143", "1508", "1624", "1680", "1798", "1803", "1966", "2645", "3545"]
+  const storeList=["1142 (Kirkland)", "1143 (North Seattle)", "1508 (South Seattle MFC)", "1624 (Issaquah)", "1680 (Silverdale)", "1798 (Puyallup)", "1803 (Lake Stevens)", "1966 (Kent)", "2645 (Everett)", "3545 (Milton)"]
 
   const handleDataChange = (index, event) => {
     const { name, value } = event.target;
@@ -62,7 +63,7 @@ function Driver() {
   };
 
   const handleAddEntry = () => {
-    setTypingData([...typingData, {}]);
+    setTypingData([...typingData, {"instruction":false, "startTime":"", "endTime":""}]);
   };
 
   function isExclusivelyNumeric(value) {
@@ -88,9 +89,37 @@ function Driver() {
 
   const handleStoreChange = (event) => {
     const store = event.target.value;
-    const storeCoordinates = {"1508": [47.5688609,-122.2879537], "1143": [47.6901322,-122.3761618], "1142": [47.6787852, -122.1733922], "1798": [47.151927947998,-122.35523223877], "1680": [47.6527018,-122.6881439], "1803": [48.004510,-122.118270], "3545": [47.249360,-122.296190], "2645": [47.875460,-122.153910], "1624": [47.541620,-122.048290], "1966": [47.357130,-122.166860]}
+    const storeCoordinates = {"1508 (South Seattle MFC)": [47.5688609,-122.2879537], "1143 (North Seattle)": [47.6901322,-122.3761618], "1142 (Kirkland)": [47.6787852, -122.1733922], "1798 (Puyallup)": [47.151927947998,-122.35523223877], "1680 (Silverdale)": [47.6527018,-122.6881439], "1803 (Lake Stevens)": [48.004510,-122.118270], "3545 (Milton)": [47.249360,-122.296190], "2645 (Everett)": [47.875460,-122.153910], "1624 (Issaquah)": [47.541620,-122.048290], "1966 (Kent)": [47.357130,-122.166860]}
     setStoreNumber([store, storeCoordinates[store]]);
   };
+
+  function handleTimePresetChange(num, event){
+    const preset = event.target.value;
+    const olderData = [...typingData]
+    console.log(preset)
+    if (preset==="8-12"){
+      typingData[num].startTime = "8:00 AM"
+      typingData[num].endTime = "12:00 PM"
+      console.log(typingData[0], num, preset)
+    }
+    if (preset==="12-4"){
+      olderData[0].startTime = "12:00 PM"
+      olderData[0].endTime = "4:00 PM"
+    }
+    if (preset==="1-5"){
+      olderData[0].startTime = "1:00 PM"
+      olderData[0].endTime = "5:00 PM"
+    }
+    if (preset==="5-9"){
+      olderData[0].startTime = "5:00 PM"
+      olderData[0].endTime = "9:00 PM"
+    }
+    if (preset==="6-10"){
+      olderData[0].startTime = "6:00 PM"
+      olderData[0].endTime = "10:00 PM"
+    }
+    setTypingData(olderData)
+  }
 
   function handleTimeWindowsChange(){
     if (timeWindows===true){
@@ -319,6 +348,7 @@ function Driver() {
   };
 
   function condenseLink(bigData){
+    console.log(bigData)
     var condensedLink="https://jacobsz0.github.io/SafewayFront?data="
     for (var i of bigData[0]){
     	var start=i["startTime24"].split(":")
@@ -466,7 +496,7 @@ function Driver() {
       <p className="text">When uploading image, please make sure the paper is as clear, as well-lit, and as flat as possible. Please wait until the text is loaded before adding another image. Please make sure the pages are in order otherwise the Route ID will be incorrect. For mobile users: It is recommended that you turn your device horizontal for easy viewing/editing of data. Unfortunatly, .PNG files preferred. Some images may not be accepted. Please reload page if any errors occor. MOST IMPORTANTLY: Please check to verify the data is correct! Image to text conversion will never be perfect. So always, always, always check before routing.</p>
       ) : null}
       <div style={{ marginTop: 10 }}>
-        <input type="button" value="Convert" onClick={processImage} />
+        <input className="glass-blue glass" type="button" value="Convert" onClick={processImage} />
       </div>
       <div>
         <progress value={progress} max={1} />
@@ -499,6 +529,11 @@ function Driver() {
             <td className="text">
               <input className="timeWindow" name="startTime" value={data.startTime || ""} onChange={(e) => handleDataChange(index, e)} />
               <input className="timeWindow" name="endTime" value={data.endTime || ""} onChange={(e) => handleDataChange(index, e)} />
+              <select value={timePreset[0]} onChange={(e) => handleTimePresetChange(index, e)}>
+                {timePreset.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
             </td>
             <td>
               <input className="phoneNumber" name="phoneNumber" value={data.phoneNumber || ""} onChange={(e) => handleDataChange(index, e)} />
@@ -506,12 +541,12 @@ function Driver() {
             <td>
               <input className="orderNumber" name="orderNumber" value={data.orderNumber || ""} onChange={(e) => handleDataChange(index, e)} />
             </td>
-            <td><button onClick={() => handleDeleteEntry(index)}><img className="deleteImage" src={deleteIcon}></img></button></td>
+            <td><button className="minus" onClick={() => handleDeleteEntry(index)}><img className="deleteImage" src={deleteIcon}></img></button></td>
           </tr>
         ))}
       </tbody>
     </table>
-    <button onClick={handleAddEntry}><img className="icon-image" src={plusIcon}></img></button>
+    <button className="plusy" onClick={handleAddEntry}><img className="icon-image" src={plusIcon}></img></button>
   </div>
     <div className="center">
       <span className="text">Store Number:   </span>
@@ -530,7 +565,7 @@ function Driver() {
         />
         </label>
         <span>--</span>
-        <button onClick={Route}>ROUTE!</button>
+        <button className="glass-green glass" onClick={Route}>ROUTE!</button>
     </div>
   </div>
   ) : null}
@@ -540,7 +575,7 @@ function Driver() {
       <div>
         <p className="text">Routing Tab</p>
         <div>
-          <button className="red-button" onClick={exportToPdf}>
+          <button className="glass-red" onClick={exportToPdf}>
             <div className="tooltip-wrap">
               <img className="icon-image" src={pdf} alt="" />
                 <div className="tooltip-content">
@@ -548,13 +583,13 @@ function Driver() {
                 </div>
               </div>
           </button>
-          <button className="tooltip-wrap" onClick={mapToggle}>
+          <button className="tooltip-wrap glass-green" onClick={mapToggle}>
             <img className="icon-image" src={mapIcon} alt="" />
             <div className="tooltip-content">
               Display Map
             </div>
           </button>
-          <button onClick={qrToggle}>
+          <button className="glass-blue" onClick={qrToggle}>
             <div className="tooltip-wrap">
               <img className="icon-image" src={qrico} alt="" />
                 <div className="tooltip-content">
@@ -562,7 +597,7 @@ function Driver() {
                 </div>
               </div>
             </button>
-          <button className="tooltip-wrap" onClick={() => {navigator.clipboard.writeText(newRouteLink)}}>
+          <button className="tooltip-wrap glass-blue" onClick={() => {navigator.clipboard.writeText(newRouteLink)}}>
             <img className="icon-image" src={copy} alt="" />
             <div className="tooltip-content">
               Copy Link
@@ -581,7 +616,7 @@ function Driver() {
                         <Marker
                           key={i["orderNumber"]}
                           position={[i.coordinates["lat"], i.coordinates["lng"]]}
-                          icon={numberIcon(num)}
+                          icon={numberIcon(num+1)}
                         ><Tooltip>{i.oldRoute}</Tooltip></Marker>
                     );
                   })}

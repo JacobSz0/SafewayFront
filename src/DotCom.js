@@ -7,17 +7,15 @@ import pdf from "./img/pdf.png"
 import qrico from "./img/qrico.png"
 import copy from "./img/copy.png"
 import homePin from "./img/home-pin.png"
-import pinPin from "./img/pin.png"
 import mapIcon from "./img/map.png"
+import pinPin from "./img/pin.png"
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from "leaflet";
-import { Tooltip } from "react-leaflet";
 
 export const homeIcon = new L.Icon({
   iconUrl: homePin,
   iconSize: [30, 35],
   iconAnchor: [15, 33],
-
 });
 
 export const pinIcon = new L.Icon({
@@ -41,7 +39,7 @@ function DotCom() {
   const [status, setStatus] = useState({"m":"Initialize", "color":"status-normal", "display":false})
 
   function isNumeric(value) {
-    return /\d/.test(value);
+    return /^-?\d+$/.test(value);
   }
 
   function routeTab() {
@@ -101,7 +99,7 @@ function DotCom() {
 
   const handleStoreChange = (event) => {
     const store = event.target.value;
-    const storeCoordinates = {"1508": [47.5688609,-122.2879537], "1143": [47.6901322,-122.3761618], "1142": [47.6787852, -122.1733922], "1798": [47.151927947998,-122.35523223877], "1680": [47.6527018,-122.6881439], "1803": [48.004510,-122.118270], "3545": [47.249360,-122.296190], "2645": [47.875460,-122.153910], "1624": [47.541620,-122.048290], "1966": [47.357130,-122.166860]}
+    const storeCoordinates = {"1508 (South Seattle MFC)": [47.5688609,-122.2879537], "1143 (North Seattle)": [47.6901322,-122.3761618], "1142 (Kirkland)": [47.6787852, -122.1733922], "1798 (Puyallup)": [47.151927947998,-122.35523223877], "1680 (Silverdale)": [47.6527018,-122.6881439], "1803 (Lake Stevens)": [48.004510,-122.118270], "3545 (Milton)": [47.249360,-122.296190], "2645 (Everett)": [47.875460,-122.153910], "1624 (Issaquah)": [47.541620,-122.048290], "1966 (Kent)": [47.357130,-122.166860]}
     setStoreNumber([store, storeCoordinates[store]]);
   };
 
@@ -117,6 +115,7 @@ function DotCom() {
         var nameBool=false
         var addressBool=false
         var instructionBool=false
+        var phoneBool=false
         var name=""
         var address=""
         var instruction=""
@@ -201,21 +200,19 @@ function DotCom() {
           secretArray2.push(secretObj)
         }
       }
-      if (is1508===true){
-        var phoneOffset=0
-        for (let i = 0; i < secretArray2.length; i++) {
-          var modulo=i+1
-          if (modulo%9!==0){
-            secretArray2[i]["phoneNumber"]=phone1508[phoneOffset]
-            phoneOffset+=1
-          }
-          else{
-            secretArray2[i]["phoneNumber"]="ErrorCode:1508"
-          }
+      var phoneOffset=0
+      for (let i = 0; i < secretArray2.length; i++) {
+        var modulo=i+1
+        if (modulo%9!==0){
+          secretArray2[i]["phoneNumber"]=phone1508[phoneOffset]
+          phoneOffset+=1
+        }
+        else{
+          secretArray2[i]["phoneNumber"]="ErrorCode:1508"
         }
       }
       console.log(secretArray2)
-      console.log(is1508)
+      console.log(phone1508)
       console.log(storeNumber)
       setManifestData(secretArray2)
     }
@@ -283,7 +280,6 @@ function DotCom() {
       const response = await fetch("https://geocode.search.hereapi.com/v1/geocode?q="+i.address+"&apiKey=DqS4NCThFlPj61WbL-TLX-hqnzz28loSxsvmZ4TCdoc");
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
         if (data["items"]){
           cnt+=1
           i["coordinates"]=data["items"][0]["position"]
@@ -326,6 +322,7 @@ function DotCom() {
       if (routeResponse.ok) {
         const routeData = await routeResponse.json();
         console.log(routeData)
+        console.log(coordinateComplete[4]["orderNumber"])
         if (routeData.results[0]?.waypoints){
           var newRoute=[]
           for (var h of routeData.results){
@@ -333,6 +330,7 @@ function DotCom() {
             for (var i of h["waypoints"])
               for (var j of coordinateComplete){
                 if (i["id"]===j["orderNumber"]){
+                  console.log(i["estimatedArrival"])
                   if (i["sequence"]===1){
                     j["ETA"]=j["startTime"]
                   }
@@ -358,16 +356,7 @@ function DotCom() {
     }
   }
 
-  const storeList=["1142", "1143", "1508", "1624", "1680", "1798", "1803", "1966", "2645", "3545"]
-
-  const numberIcon = (number) => {
-    return L.divIcon({
-      html: `<div>${number}</div>`,
-      iconUrl: homePin,
-      iconSize: [16, 20],
-      iconAnchor: [0, 0],
-    });
-  };
+  const storeList=["1142 (Kirkland)", "1143 (North Seattle)", "1508 (South Seattle MFC)", "1624 (Issaquah)", "1680 (Silverdale)", "1798 (Puyallup)", "1803 (Lake Stevens)", "1966 (Kent)", "2645 (Everett)", "3545 (Milton)"]
 
   useEffect(() => {
     processData()
@@ -450,7 +439,7 @@ function DotCom() {
             />
           </label>
           <span>--</span>
-          <button onClick={Route}>ROUTE!</button>
+          <button className="glass-green glass" onClick={Route}>ROUTE!</button>
         </div>
         </div>
       ) : null}
@@ -460,7 +449,7 @@ function DotCom() {
       <div>
         <p className="text">Routing Tab</p>
         <div>
-          <button className="red-button" onClick={exportToPdf}>
+          <button className="glass-red" onClick={exportToPdf}>
             <div className="tooltip-wrap">
               <img className="icon-image" src={pdf} alt="" />
                 <div className="tooltip-content">
@@ -468,13 +457,13 @@ function DotCom() {
                 </div>
               </div>
           </button>
-          <button className="tooltip-wrap" onClick={mapToggle}>
+          <button className="tooltip-wrap glass-green" onClick={mapToggle}>
             <img className="icon-image" src={mapIcon} alt="" />
             <div className="tooltip-content">
               Display Map
             </div>
           </button>
-          <button onClick={qrToggle}>
+          <button className="glass-lblue" onClick={qrToggle}>
             <div className="tooltip-wrap">
               <img className="icon-image" src={qrico} alt="" />
                 <div className="tooltip-content">
@@ -482,7 +471,7 @@ function DotCom() {
                 </div>
               </div>
             </button>
-          <button className="tooltip-wrap" onClick={() => {navigator.clipboard.writeText(newRouteLink)}}>
+          <button className="tooltip-wrap glass-lblue" onClick={() => {navigator.clipboard.writeText(newRouteLink)}}>
             <img className="icon-image" src={copy} alt="" />
             <div className="tooltip-content">
               Copy Link
@@ -496,13 +485,13 @@ function DotCom() {
                   attribution='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
                 />
                 <Marker position={storeNumber[1]} icon={homeIcon}></Marker>
-                  {routedData[0].map((i, num) => {
+                  {routedData[0].map((i) => {
                     return (
                         <Marker
                           key={i["orderNumber"]}
                           position={[i.coordinates["lat"], i.coordinates["lng"]]}
-                          icon={numberIcon(num)}
-                        ><Tooltip>{i.oldRoute}</Tooltip></Marker>
+                          icon={pinIcon}
+                        ></Marker>
                     );
                   })}
 

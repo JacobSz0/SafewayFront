@@ -133,10 +133,6 @@
   color: white;
 }
 
-.red-button{
-  background-color: #ff7f7f;
-}
-
 .my-card {
   margin-left: auto;
   margin-right: auto;
@@ -186,4 +182,169 @@ footer a:hover {
   text-align: center;
   color: white;
   background-color: rgb(0, 0, 147);
+}
+
+.glass-green{
+	/* background styles */
+	position: relative;
+	display: inline-block;
+	padding: 5px 10px;
+	background-color: green; /*for compatibility with older browsers*/
+	background-image: linear-gradient(green,lightgreen);
+
+	/* text styles */
+	text-decoration: none;
+	color: #fff;
+	font-size: 15px;
+	font-family: sans-serif;
+	font-weight: 100;
+
+  box-shadow: 0px 1px 4px -2px #333;
+  text-shadow: 0px -1px #333;
+}
+
+.glass:after{
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: calc(100% - 4px);
+	height: 50%;
+	background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+}
+
+.glass-green:hover{
+	background: linear-gradient(#073,#0fa);
+}
+
+.glass-blue{
+	/* background styles */
+	position: relative;
+	display: inline-block;
+	padding: 5px 10px;
+	background-color: rgb(0, 13, 128); /*for compatibility with older browsers*/
+	background-image: linear-gradient(rgb(17, 0, 128),rgb(144, 163, 238));
+
+	/* text styles */
+	text-decoration: none;
+	color: #fff;
+	font-size: 15px;
+	font-family: sans-serif;
+	font-weight: 100;
+
+  box-shadow: 0px 1px 4px -2px #333;
+  text-shadow: 0px -1px #333;
+}
+
+
+.glass-blue:hover{
+	background: linear-gradient(rgb(0, 16, 119),rgb(0, 13, 255));
+}
+
+.glass-lblue{
+	/* background styles */
+	position: relative;
+	display: inline-block;
+	padding: 5px 10px;
+	background-color: rgb(74, 87, 204); /*for compatibility with older browsers*/
+	background-image: linear-gradient(rgb(78, 60, 193),rgb(188, 195, 226));
+
+	/* text styles */
+	text-decoration: none;
+	color: #fff;
+	font-size: 15px;
+	font-family: sans-serif;
+	font-weight: 100;
+
+  box-shadow: 0px 1px 4px -2px #333;
+  text-shadow: 0px -1px #333;
+}
+
+
+.glass-lblue:hover{
+	background: linear-gradient(rgb(0, 16, 119),rgb(0, 13, 255));
+}
+
+.glass-red{
+	/* background styles */
+	position: relative;
+	display: inline-block;
+	padding: 5px 10px;
+	background-color: rgb(128, 0, 0); /*for compatibility with older browsers*/
+	background-image: linear-gradient(rgb(128, 0, 0),rgb(238, 144, 144));
+
+	/* text styles */
+	text-decoration: none;
+	color: #fff;
+	font-size: 15px;
+	font-family: sans-serif;
+	font-weight: 100;
+
+  box-shadow: 0px 1px 4px -2px #333;
+  text-shadow: 0px -1px #333;
+}
+
+
+.glass-red:hover{
+	background: linear-gradient(rgb(119, 0, 0),rgb(255, 0, 0));
+}
+
+.plusy{
+  flex-direction: column;
+  align-items: center;
+  border-radius: 100%;
+  width: 45px;
+  height: 45px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+}
+
+.plusy:after{
+	content: '';
+	top: 2px;
+	left: 2px;
+	width: calc(100% - 4px);
+	height: 50%;
+	background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+}
+
+.plusy:hover{
+	background: linear-gradient(rgb(17, 255, 0),rgb(0, 116, 15));
+}
+
+.minus{
+  flex-direction: column;
+  align-items: center;
+  border-radius: 100%;
+  width: 25px;
+  height: 30px;
+  display: flex;
+
+  justify-content: center;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+}
+
+.minus:after{
+	content: '';
+	top: 2px;
+	left: 2px;
+	width: calc(100% - 4px);
+	height: 50%;
+	background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+}
+
+.minus:hover{
+	background: linear-gradient(rgb(255, 0, 0),rgb(116, 64, 0));
 }
