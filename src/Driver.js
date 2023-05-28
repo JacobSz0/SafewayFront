@@ -96,11 +96,9 @@ function Driver() {
   function handleTimePresetChange(num, event){
     const preset = event.target.value;
     const olderData = [...typingData]
-    console.log(preset)
     if (preset==="8-12"){
       typingData[num].startTime = "8:00 AM"
       typingData[num].endTime = "12:00 PM"
-      console.log(typingData[0], num, preset)
     }
     if (preset==="12-4"){
       olderData[0].startTime = "12:00 PM"
@@ -243,9 +241,7 @@ function Driver() {
     let elem = document.getElementById("toRender");
     elem.scrollIntoView();
     h2c(elem).then(canvas => {
-      //document.body.appendChild(canvas)
       const img = canvas.toDataURL("image/png", 1);
-      //console.log(`"data:image/png;base64,${img}"`)
 
       var imgWidth = 190;
       var pageHeight = 200;
@@ -289,7 +285,6 @@ function Driver() {
 
         canvas.toBlob((blob) => {
           const pngFile = new File([blob], 'converted.png', { type: 'image/png' });
-          console.log(pngFile)
           setStatus({"m":"Converting to Text...", "color":"status-normal", "display":false})
           Tesseract.recognize(pngFile, "eng", {
             logger: (m) => {
@@ -315,9 +310,7 @@ function Driver() {
   const processImage = () => {
     setStatus({"m":"Processing Image...", "color":"status-normal", "display":false})
     setProgress(0);
-    console.log(file)
     if (file.type!=="image/png"){
-        console.log("Convert to PNG")
         setStatus({"m":"Converting to PNG format...", "color":"status-normal", "display":false})
         convertToPng(file)
     }
@@ -348,7 +341,6 @@ function Driver() {
   };
 
   function condenseLink(bigData){
-    console.log(bigData)
     var condensedLink="https://jacobsz0.github.io/SafewayFront?data="
     for (var i of bigData[0]){
     	var start=i["startTime24"].split(":")
@@ -407,11 +399,10 @@ function Driver() {
         }
       }
     }
-    console.log(coordinateComplete)
     if (cnt===coordinateManifest.length){
       setStatus({"m":"Routing data...", "color":"status-normal", "display":false})
 
-      const storeCoordinates = {"1508": "47.5688609,-122.2879537", "1143": "47.6901322,-122.3761618", "1142": "47.6787852, -122.1733922", "1798": "47.151927947998,-122.35523223877", "1680": "47.6527018,-122.6881439", "1803": "48.004510,-122.118270", "3545": "47.249360,-122.296190", "2645": "47.875460,-122.153910", "1624": "47.541620,-122.048290", "1966": "47.357130,-122.166860"}
+      const storeCoordinates = {"1508 (South Seattle MFC)": "47.5688609,-122.2879537", "1143 (North Seattle)": "47.6901322,-122.3761618", "1142 (Kirkland)": "47.6787852, -122.1733922", "1798 (Puyallup)": "47.151927947998,-122.35523223877", "1680 (Silverdale)": "47.6527018,-122.6881439", "1803 (Lake Stevens)": "48.004510,-122.118270", "3545 (Milton)": "47.249360,-122.296190", "2645 (Everett)": "47.875460,-122.153910", "1624 (Issaquah)": "47.541620,-122.048290", "1966 (Kent)": "47.357130,-122.166860"}
 
       var year = new Date().getFullYear()
       var month = new Date().getMonth()+1
@@ -427,7 +418,6 @@ function Driver() {
       for (var i of coordinateComplete){
         cnt+=1
         if (timeWindows===true){
-          console.log("Time Windows")
           var stop="&destination"+cnt+"="+i["orderNumber"]+";"+i["coordinates"]["lat"]+","+i["coordinates"]["lng"]+";acc:mo"+i["startTime24"]+":00-0"+offset+":00%7cmo"+i["endTime24"]+":00-0"+offset+":00;st:420" // The 420 is the amount of seconds between stops on average
         }
         else{

@@ -63,9 +63,7 @@ function DotCom() {
     let elem = document.getElementById("toRender");
     elem.scrollIntoView();
     h2c(elem).then(canvas => {
-      //document.body.appendChild(canvas)
       const img = canvas.toDataURL("image/png", 1);
-      //console.log(`"data:image/png;base64,${img}"`)
 
       var imgWidth = 190;
       var pageHeight = 200;
@@ -212,8 +210,6 @@ function DotCom() {
         }
       }
       console.log(secretArray2)
-      console.log(phone1508)
-      console.log(storeNumber)
       setManifestData(secretArray2)
     }
   }
@@ -291,7 +287,7 @@ function DotCom() {
     if (cnt===coordinateManifest.length){
       setStatus({"m":"Routing data...", "color":"status-normal", "display":false})
 
-      const storeCoordinates = {"1508": "47.5688609,-122.2879537", "1143": "47.6901322,-122.3761618", "1142": "47.6787852, -122.1733922", "1798": "47.151927947998,-122.35523223877", "1680": "47.6527018,-122.6881439", "1803": "48.004510,-122.118270", "3545": "47.249360,-122.296190", "2645": "47.875460,-122.153910", "1624": "47.541620,-122.048290", "1966": "47.357130,-122.166860"}
+      const storeCoordinates2 = {"1508 (South Seattle MFC)": "47.5688609,-122.2879537", "1143 (North Seattle)": "47.6901322,-122.3761618", "1142 (Kirkland)": "47.6787852, -122.1733922", "1798 (Puyallup)": "47.151927947998,-122.35523223877", "1680 (Silverdale)": "47.6527018,-122.6881439", "1803 (Lake Stevens)": "48.004510,-122.118270", "3545 (Milton)": "47.249360,-122.296190", "2645 (Everett)": "47.875460,-122.153910", "1624 (Issaquah)": "47.541620,-122.048290", "1966 (Kent)": "47.357130,-122.166860"}
 
       var year = new Date().getFullYear()
       var month = new Date().getMonth()+1
@@ -302,12 +298,11 @@ function DotCom() {
       var offset = new Date().getTimezoneOffset();
       offset=offset/60
 
-      var routerLink="https://wps.hereapi.com/v8/findsequence2?departure="+year+"-"+month+"-"+day+"T"+beginTime+":00-0"+offset+":00"+"&mode=fastest;car;traffic:enabled&start="+storeNumber[0]+";"+storeCoordinates[storeNumber[0]]
+      var routerLink="https://wps.hereapi.com/v8/findsequence2?departure="+year+"-"+month+"-"+day+"T"+beginTime+":00-0"+offset+":00"+"&mode=fastest;car;traffic:enabled&start="+storeNumber[0]+";"+storeCoordinates2[storeNumber[0]]
       var cnt=0
       for (var i of coordinateComplete){
         cnt+=1
         if (timeWindows===true){
-          console.log("Time Windows")
           var stop="&destination"+cnt+"="+i["orderNumber"]+";"+i["coordinates"]["lat"]+","+i["coordinates"]["lng"]+";acc:mo"+i["startTime24"]+":00-0"+offset+":00%7cmo"+i["endTime24"]+":00-0"+offset+":00;st:420" // The 420 is the amount of seconds between stops on average
         }
         else{
@@ -315,14 +310,13 @@ function DotCom() {
         }
         routerLink+=stop
       }
-      routerLink=routerLink+"&end="+11177777484+";"+storeCoordinates[storeNumber[0]]+"&improveFor=TIME"+"&apikey=DqS4NCThFlPj61WbL-TLX-hqnzz28loSxsvmZ4TCdoc"
+      routerLink=routerLink+"&end="+11177777484+";"+storeCoordinates2[storeNumber[0]]+"&improveFor=TIME"+"&apikey=DqS4NCThFlPj61WbL-TLX-hqnzz28loSxsvmZ4TCdoc"
       console.log(routerLink)
 
       const routeResponse = await fetch(routerLink);
       if (routeResponse.ok) {
         const routeData = await routeResponse.json();
         console.log(routeData)
-        console.log(coordinateComplete[4]["orderNumber"])
         if (routeData.results[0]?.waypoints){
           var newRoute=[]
           for (var h of routeData.results){
@@ -330,7 +324,6 @@ function DotCom() {
             for (var i of h["waypoints"])
               for (var j of coordinateComplete){
                 if (i["id"]===j["orderNumber"]){
-                  console.log(i["estimatedArrival"])
                   if (i["sequence"]===1){
                     j["ETA"]=j["startTime"]
                   }
