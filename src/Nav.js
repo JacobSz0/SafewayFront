@@ -8,6 +8,9 @@ function Nav() {
         <NavLink className="nav-main" to="/">
           Main
         </NavLink>
+        <NavLink className="nav-redirect" to="/qr">
+          <h5>QR</h5>
+        </NavLink>
         <NavLink className="nav-redirect" to="/dotcom">
           <h5>DotCom</h5>
         </NavLink>
