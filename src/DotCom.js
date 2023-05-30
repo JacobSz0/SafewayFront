@@ -108,6 +108,7 @@ function DotCom() {
       var phone1508=[]
       const secretArray = secret.split("SIGNATURE");
       var secretArray2=[]
+      var is1508=false
       for (var i of secretArray){
         var newd = i.split(" ");
         var nameBool=false
@@ -119,7 +120,6 @@ function DotCom() {
         var instruction=""
         var phoneNumber=""
         var orderNumber=""
-        var is1508=false
         var cnt=0
         for (let j = 0; j < newd.length; j++) {
           if (newd[j]==="001"){
@@ -198,18 +198,20 @@ function DotCom() {
           secretArray2.push(secretObj)
         }
       }
-      var phoneOffset=0
-      for (let i = 0; i < secretArray2.length; i++) {
-        var modulo=i+1
-        if (modulo%9!==0){
-          secretArray2[i]["phoneNumber"]=phone1508[phoneOffset]
-          phoneOffset+=1
-        }
-        else{
-          secretArray2[i]["phoneNumber"]="ErrorCode:1508"
+      if (is1508===true){
+        var phoneOffset=0
+        for (let i = 0; i < secretArray2.length; i++) {
+          var modulo=i+1
+          if (modulo%9!==0){
+            secretArray2[i]["phoneNumber"]=phone1508[phoneOffset]
+            phoneOffset+=1
+          }
+          else{
+            secretArray2[i]["phoneNumber"]="ErrorCode:1508"
+          }
         }
       }
-      console.log(secretArray2)
+        console.log(secretArray2)
       setManifestData(secretArray2)
     }
   }
@@ -270,10 +272,14 @@ function DotCom() {
     var coordinateManifest=manifestData
     var cnt=0
     var coordinateComplete=[]
+    var count=0
+    var apiKey="DqS4NCThFlPj61WbL-TLX-hqnzz28loSxsvmZ4TCdoc"
     for (var i of coordinateManifest){
+      count+=1
       i["startTime24"]=convertTime(i.startTime)
       i["endTime24"]=convertTime(i.endTime)
-      const response = await fetch("https://geocode.search.hereapi.com/v1/geocode?q="+i.address+"&apiKey=DqS4NCThFlPj61WbL-TLX-hqnzz28loSxsvmZ4TCdoc");
+      if (count>=15){apiKey="Ro31-eiio5_3jiAkLjhooW45-wehqAykvpA8G1Ek3U0"}
+      const response = await fetch("https://geocode.search.hereapi.com/v1/geocode?q="+i.address+"&apiKey="+apiKey);
       if (response.ok) {
         const data = await response.json();
         if (data["items"]){

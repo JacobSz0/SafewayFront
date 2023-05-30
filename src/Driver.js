@@ -385,13 +385,16 @@ function Driver() {
     var coordinateManifest=typingData
     var cnt=0
     var coordinateComplete=[]
+    var count=0
+    var apiKey="DqS4NCThFlPj61WbL-TLX-hqnzz28loSxsvmZ4TCdoc"
     for (var i of coordinateManifest){
+      count+=1
       i["startTime24"]=convertTime(i.startTime)
       i["endTime24"]=convertTime(i.endTime)
-      const response = await fetch("https://geocode.search.hereapi.com/v1/geocode?q="+i.address+"&apiKey=DqS4NCThFlPj61WbL-TLX-hqnzz28loSxsvmZ4TCdoc");
+      if (count>=15){apiKey="Ro31-eiio5_3jiAkLjhooW45-wehqAykvpA8G1Ek3U0"}
+      const response = await fetch("https://geocode.search.hereapi.com/v1/geocode?q="+i.address+"&apiKey="+apiKey);
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
         if (data["items"]){
           cnt+=1
           i["coordinates"]=data["items"][0]["position"]
