@@ -107,14 +107,12 @@ function DotCom() {
 
     setStatus({"m":"Awaitng Route Perameters", "color":"status-normal", "display":false})
     if (secret){
-      console.log("TEST")
       var phone1508=[]
       const secretArray = secret.split("SIGNATURE");
       var secretArray2=[]
       var is1508=false
       for (var i of secretArray){
         var newd = i.split("\n").join(" ").split(" ")
-        console.log(newd)
         var nameBool=false
         var addressBool=false
         var instructionBool=false
@@ -128,7 +126,6 @@ function DotCom() {
         for (let j = 0; j < newd.length; j++) {
           if (newd[j]==="001"){
             var routeLetter=newd[j-11]
-            console.log(routeLetter)
           }
           if (newd[j] === "WINDOW:"){
             var startTime=newd[j+1]+" "+newd[j+2]
@@ -186,7 +183,6 @@ function DotCom() {
           }
         }
         if (address!==""){
-          console.log("Here!!!")
           var secretObj={}
           secretObj["oldRoute"]=oldRoute
           secretObj["startTime"]=startTime
