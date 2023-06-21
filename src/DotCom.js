@@ -11,6 +11,7 @@ import mapIcon from "./img/map.png"
 import pinPin from "./img/pin.png"
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from "leaflet";
+import { Tooltip } from "react-leaflet";
 
 export const homeIcon = new L.Icon({
   iconUrl: homePin,
@@ -103,14 +104,17 @@ function DotCom() {
 
 
   function processData(secret) {
+
     setStatus({"m":"Awaitng Route Perameters", "color":"status-normal", "display":false})
     if (secret){
+      console.log("TEST")
       var phone1508=[]
       const secretArray = secret.split("SIGNATURE");
       var secretArray2=[]
       var is1508=false
       for (var i of secretArray){
-        var newd = i.split(" ");
+        var newd = i.split("\n").join(" ").split(" ")
+        console.log(newd)
         var nameBool=false
         var addressBool=false
         var instructionBool=false
@@ -124,6 +128,7 @@ function DotCom() {
         for (let j = 0; j < newd.length; j++) {
           if (newd[j]==="001"){
             var routeLetter=newd[j-11]
+            console.log(routeLetter)
           }
           if (newd[j] === "WINDOW:"){
             var startTime=newd[j+1]+" "+newd[j+2]
@@ -181,6 +186,7 @@ function DotCom() {
           }
         }
         if (address!==""){
+          console.log("Here!!!")
           var secretObj={}
           secretObj["oldRoute"]=oldRoute
           secretObj["startTime"]=startTime
@@ -371,6 +377,15 @@ function DotCom() {
     else if (showMap===true){setShowMap(false)}
   }
 
+  const numberIcon = (number) => {
+    return L.divIcon({
+      html: `<div>${number}</div>`,
+      iconUrl: homePin,
+      iconSize: [16, 20],
+      iconAnchor: [0, 0],
+    });
+  };
+
 
   return (
     <div>
@@ -484,13 +499,13 @@ function DotCom() {
                   attribution='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
                 />
                 <Marker position={storeNumber[1]} icon={homeIcon}></Marker>
-                  {routedData[0].map((i) => {
+                  {routedData[0].map((i, num) => {
                     return (
                         <Marker
                           key={i["orderNumber"]}
                           position={[i.coordinates["lat"], i.coordinates["lng"]]}
-                          icon={pinIcon}
-                        ></Marker>
+                          icon={numberIcon(num+1)}
+                        ><Tooltip>{i.oldRoute}</Tooltip></Marker>
                     );
                   })}
 
