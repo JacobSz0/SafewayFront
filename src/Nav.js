@@ -11,7 +11,7 @@ function Nav() {
         <NavLink className="nav-redirect" to="/qr">
           <h5>QR</h5>
         </NavLink>
-        <NavLink className="nav-redirect" to="/dotcom">
+        <NavLink className="nav-redirect" to="/newdotcom">
           <h5>DotCom</h5>
         </NavLink>
         <NavLink className="nav-redirect" to="/driver">

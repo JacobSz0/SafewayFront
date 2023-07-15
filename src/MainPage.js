@@ -5,48 +5,14 @@ import h2c from "html2canvas";
 import Tooltip from "react-tooltip";
 import info from "./img/info.png"
 import { NavLink } from "react-router-dom";
+import Routed from "./Routed";
 
 function MainPage() {
 
   const [main, setMain] = useState(true);
   const [routedData, setRoutedData] = useState([])
-  const [showQr, setShowQr] = useState(false)
 
 
-  function qrToggle(){
-    if (showQr===false){setShowQr(true)}
-    else if (showQr===true){setShowQr(false)}
-  }
-
-  function exportToPdf() {
-    let elem = document.getElementById("toRender");
-    elem.scrollIntoView();
-    h2c(elem).then(canvas => {
-      //document.body.appendChild(canvas)
-      const img = canvas.toDataURL("image/png", 1);
-
-      var imgWidth = 190;
-      var pageHeight = 200;
-      var imgHeight = (canvas.height * imgWidth) / canvas.width;
-      var heightLeft = imgHeight;
-
-      const pdf = new JSpdf("p", "mm");
-      var position = 10;
-
-      pdf.addImage(img, "PNG", 10, position, imgWidth, imgHeight, 100);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(img, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      //pdf.addImage(img, 'PNG', 0, 0)
-      pdf.save("new_route.pdf");
-    });
-  };
   function convertTimeBack(t){
     var time=parseInt(t)
     if (time>12){
@@ -162,52 +128,7 @@ function MainPage() {
       </div>
     ) : null}
     {!main ? (
-      <div>
-        <button onClick={exportToPdf}>Download PDF</button>
-          <button onClick={qrToggle}>Show Giant QR Code</button>
-          {showQr ? (
-          <div className="qr">
-            <QRCode value={window.location.href} size={512} />
-          </div>
-          ) : null}
-      <table className="table bg-lite" id="toRender">
-        <thead className="blue-background">
-          <tr>
-          <td className="text">Route ID</td>
-            <td className="text">Name</td>
-            <td className="text">Address</td>
-            <td className="text">Inst</td>
-            <td className="text">Time Window</td>
-            <td className="text">Phone #</td>
-            <td className="text">Order #</td>
-          </tr>
-        </thead>
-        <tbody>
-        {routedData.map((i) => {
-          return(
-            <tr key={i.orderNumber}>
-              <td className="text-center">{i.oldRoute}</td>
-              <td className="text-center">{i.name}</td>
-              <td><a className="text-center" href={"https://maps.google.com/?q=" + i.address}>{i.address}</a></td>
-              <td className="text-center">
-                {i.instructionBool ? (
-                    <div className="tooltip-wrap">
-                        <img className="information-image"src={info} alt="" />
-                        <div className="tooltip-content">
-                            {i.instruction}
-                        </div>
-                    </div>
-                ) : null}
-              </td>
-              <td className="text-center">{i.startTime} - {i.endTime}</td>
-              <td className="text-center"><a href={`tel:${i.phoneNumber}`}>{i.phoneNumber}</a></td>
-              <td className="text-center">{i.orderNumber}</td>
-            </tr>
-          )
-        })}
-        </tbody>
-      </table>
-    </div>
+      <Routed rtd={[routedData]}/>
     ) : null}
     </>
   );
