@@ -9,6 +9,7 @@
 
 .address{
   width: 250px;
+  align-items: center;
 }
 
 .timeWindow{

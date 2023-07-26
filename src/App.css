@@ -113,6 +113,12 @@
   border: 3px solid green;
   padding: 10px;
 }
+
+.center2{
+  margin: auto;
+  width: auto;
+}
+
 .textarea{
   width: 400px;
   margin: auto;

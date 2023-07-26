@@ -31,7 +31,7 @@ export const homeIcon = new L.Icon({
 function JustAddresses() {
   const [typingData, setTypingData] = useState([]);
   const [routedData, setRoutedData] = useState([[{name:"Wait for it...", address: "", startTime: "", endTime: "", oldRoute: "", orderNumber: "pending...", coordinates:{lat:47.652690, lng:-122.688230}}]])
-  const [storeNumber, setStoreNumber] = useState(["1508", [47.5688609, -122.2879537]])
+  const [storeNumber, setStoreNumber] = useState(["1508 (South Seattle MFC)", [47.5688609, -122.2879537]])
   const [initButton, setInitButton] = useState(true)
   const [newRouteLink, setNewRouteLink] = useState("http://localhost:4000/dotcom")
   const [showQr, setShowQr] = useState(false)
@@ -111,7 +111,7 @@ function JustAddresses() {
 
 
   async function Route(){
-    routeTab()
+
     setStatus({"m":"Geolocating Data...", "color":"status-normal", "display":false})
     var coordinateManifest=typingData
     var cnt=0
@@ -141,7 +141,7 @@ function JustAddresses() {
       if (month<10){month="0"+month}
       var day = new Date().getDate()
       if (day<10){day="0"+day}
-      var beginTime = coordinateComplete[0]["startTime24"]
+      var beginTime = JSON.stringify(new Date().getHours())+":"+JSON.stringify(new Date().getMinutes())
       var offset = new Date().getTimezoneOffset();
       offset=offset/60
 
@@ -160,10 +160,29 @@ function JustAddresses() {
         const routeData = await routeResponse.json();
         console.log(routeData)
         if (routeData.results[0]?.waypoints){
-          console.log(routeData)
+					var newRoute=[]
+          for (var h of routeData.results){
+          	var newOne=[]
+            for (var i of h["waypoints"])
+              for (var j of coordinateComplete){
+                if (i["id"]===j["oldRoute"]){
+                  if (i["sequence"]===1){
+                    j["ETA"]=j["startTime"]
+                  }
+                  else{
+                    var splitETA=i["estimatedArrival"].split("T")
+                    var splitETA2=splitETA[1].split(":")
+                    j["ETA"]=splitETA2[0]+":"+splitETA2[1]
+                  }
+                  newOne.push(j)
+                }
+              }
+              newRoute.push(newOne)
+            }
+          console.log(newRoute)
           setStatus({"m":"Routing Success!", "color":"status-green", "display":true})
-          setRoutedData(routedData)
-          //link maker for qr code
+          setRoutedData(newRoute)
+					routeTab()
         }
         else{setStatus({"m":"An Error occored: Try deselecting time windows", "color":"status-red"})}
       }
@@ -198,6 +217,7 @@ function JustAddresses() {
         <tr>
           <td className="text">Route ID</td>
           <td className="text">Address</td>
+					<td className="text">Delete</td>
         </tr>
       </thead>
       <tbody>
@@ -289,8 +309,8 @@ function JustAddresses() {
             {routedData[0].map((i) => {
               return(
                 <tr key={i.oldRoute}>
-                  <td>{i.oldRoute}</td>
-                  <td><a href={"https://maps.google.com/?q=" + i.address}>{i.address}</a></td>
+                  <td><span className="text-center">{i.oldRoute}</span></td>
+                  <td><a className="text-center" href={"https://maps.google.com/?q=" + i.address}>{i.address}</a></td>
                 </tr>
               )
             })}
