@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Routed from "./Routed";
 
 
-function NewDotCom() {
+function Driver2() {
   const [manifestBox, setManifestBox] = useState("");
   const [manifestData, setManifestData] = useState([{name:"pending...", address: "pending...", startTime: "pending...", endTime: "pending...", orderNumber: "pending..."}])
   const [routedData, setRoutedData] = useState([[{name:"Wait for it...", address: "", startTime: "", endTime: "", startTime24:"08:00", endTime24: "09:00", oldRoute: "", orderNumber: "pending...", instruction: "", coordinates:{lat:47.652690, lng:-122.688230}}]])
@@ -77,13 +77,17 @@ function NewDotCom() {
         var orderNumber=""
         var cnt=0
         for (let j = 0; j < newd.length; j++) {
-          if (newd[j]==="001"){
-            var routeLetter=newd[j-11]
+          if (newd[j]==="FLEET"){
+            var fleet=newd[j+1].split("-")
+            var routeLetter=fleet[0]
+          }
+          if (newd[2].length===3){
+            var oldRoute=routeLetter+"-"+newd[2]
+            var name=newd[4]+" "+newd[5]
           }
           if (newd[j] === "WINDOW:"){
             var startTime=newd[j+1]+" "+newd[j+2]
-            var endTime=newd[j+4]+" "+newd[j+5]
-            var oldRoute=routeLetter+"-"+newd[j-1]
+            var endTime=newd[j+3]+" "+newd[j+4]
           }
           if (newd[j] === "TIME:"){nameBool=true}
           if (nameBool===true && isNumeric(newd[j])===true){
@@ -233,7 +237,7 @@ function NewDotCom() {
         }
         routerLink+=stop
       }
-      if (quantity!==true){
+      if (quantity===true){
         console.log("Home store added")
         routerLink=routerLink+"&end="+11177777484+";"+storeCoordinates2[storeNumber[0]]
       }
@@ -293,9 +297,7 @@ function NewDotCom() {
       {initButton ? (
         <div>
         <div>
-          <span className="text">Please highlight the ENTIRE manifest and paste it into here. </span>
-          <span className="text">Be sure to press Enter in the text box before adding another manifest. </span>
-          <span className="text">This data only exsits in your browser. If you refresh the browser, your progress will be lost. </span>
+          <span className="text">Use the <a href="https://lens.google/">Google Lens</a> app to take a picture of your manifest. Make sure you copy ALL of the text and paste it into this text box. Remember to press Enter before adding another page. This data only exsits in your browser. If you refresh the browser, your progress will be lost.</span>
         </div>
         <div className="textarea">
           <textarea rows={5}
@@ -375,11 +377,11 @@ function NewDotCom() {
       {!initButton ? (
       <div>
         <p className="text">Routing Tab</p>
-        <Routed rtd={routedData} strnmb={storeNumber}/>
+        <Routed rtd={routedData}/>
       </div>
       ) : null}
     </div>
   );
 };
 
-export default NewDotCom;
+export default Driver2;

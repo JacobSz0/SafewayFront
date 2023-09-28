@@ -131,7 +131,8 @@ function Routed(props){
     condenseLink(routedData)
 		makeFullLink(routedData)
 		setRoutedData(props.rtd)
-  }, []);
+		setStoreNumber(props.strnmb)
+  }, [routedData]);
 
 	return(
 		<div>

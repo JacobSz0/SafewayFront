@@ -5,6 +5,7 @@ import MainPage from "./MainPage.js";
 import DotCom from "./DotCom.js";
 import NewDotCom from "./NewDotCom.js"
 import Driver from "./Driver.js";
+import Driver2 from "./Driver2.js";
 import QR from "./QR.js"
 import JustAddresses from "./JustAddresses.js"
 import Foot from "./Foot.js";
@@ -22,6 +23,7 @@ function App() {
             <Route path="/" element={<MainPage />} />
             <Route path="/dotcom" element={<DotCom />} />
             <Route path="/driver" element={<Driver />} />
+            <Route path="/driver2" element={<Driver2 />} />
             <Route path="/qr" element={<QR />}/>
             <Route path="/newdotcom" element={<NewDotCom />}/>
             <Route path="/just-addresses" element={<JustAddresses />}/>

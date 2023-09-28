@@ -14,7 +14,7 @@ function Nav() {
         <NavLink className="nav-redirect" to="/newdotcom">
           <h5>DotCom</h5>
         </NavLink>
-        <NavLink className="nav-redirect" to="/driver">
+        <NavLink className="nav-redirect" to="/driver2">
           <h5>Driver</h5>
         </NavLink>
 
