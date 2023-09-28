@@ -491,7 +491,9 @@ function DotCom() {
                           key={i["orderNumber"]}
                           position={[i.coordinates["lat"], i.coordinates["lng"]]}
                           icon={pinIcon}
-                        ></Marker>
+                        >
+                          <Popup>{i.oldRoute}</Popup>
+                        </Marker>
                     );
                   })}
 

@@ -9,7 +9,7 @@ import copy from "./img/copy.png"
 import homePin from "./img/home-pin.png"
 import mapIcon from "./img/map.png"
 import pinPin from "./img/pin.png"
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Tooltip, Popup } from 'react-leaflet';
 import L from "leaflet";
 
 export const homeIcon = new L.Icon({
@@ -178,7 +178,9 @@ function Routed(props){
 											key={i["orderNumber"]}
 											position={[i.coordinates["lat"], i.coordinates["lng"]]}
 											icon={pinIcon}
-										></Marker>
+										>
+											<Tooltip>{i.oldRoute}</Tooltip>
+										</Marker>
 								);
 							})}
 
@@ -227,6 +229,11 @@ function Routed(props){
 						</tr>
 					)
 				})}
+					<tr>
+						<td>End</td>
+						<td></td>
+						<td><a href={"https://maps.google.com/?q="+storeNumber[1]}>{storeNumber[0]}</a></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
