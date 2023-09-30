@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Routed from "./Routed";
+import help1 from "./img/DriverToutorial1.jpg"
+import help2 from "./img/DriverToutorial2.png"
+import help3 from "./img/DriverToutorial3.jpg"
+import help4 from "./img/DriverToutorial4.jpg"
 
 
 function Driver2() {
@@ -337,7 +341,41 @@ function Driver2() {
       {initButton ? (
         <div>
         <div>
-          <span className="text">Use the <a href="https://lens.google/">Google Lens</a> app to take a picture of your manifest. Make sure you copy ALL of the text and paste it into this text box. Remember to press Enter before adding another page. This data only exsits in your browser. If you refresh the browser, your progress will be lost.</span>
+          <span className="text">Use the <a href="https://play.google.com/store/apps/details?id=com.google.ar.lens">Google Lens</a> app {"(and for you iPhone people: "}<a href="https://apps.apple.com/app/id284815942">Google App</a>{")"} to take a clear picture of your manifest with no other words in frame. Make sure you copy ALL of the text and paste it into this text box. Remember to press Enter before adding another page. This data only exsits in your browser. If you refresh the browser, your progress will be lost.</span>
+          <br></br>
+          <button>
+            <div className="tooltip-wrap">
+              Step 1
+              <div className="tooltip-content">
+                <img className="help1" src={help1}></img>
+              </div>
+            </div>
+          </button>
+          <button>
+            <div className="tooltip-wrap">
+              Step 2
+              <div className="tooltip-content">
+                <img className="help2" src={help2}></img>
+              </div>
+            </div>
+          </button>
+          <br></br>
+          <button>
+            <div className="tooltip-wrap">
+              Step 3
+              <div className="tooltip-content">
+                <img className="help1" src={help3}></img>
+              </div>
+            </div>
+          </button>
+          <button>
+            <div className="tooltip-wrap">
+              Step 4
+              <div className="tooltip-content">
+                <img className="help1" src={help4}></img>
+              </div>
+            </div>
+          </button>
         </div>
         <div className="textarea">
           <textarea rows={5}
