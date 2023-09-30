@@ -68,8 +68,11 @@ function Driver2() {
         var newd = i.split("\n").join(" ").split(" ")
         var nameBool=false
         var addressBool=false
+        var trueAddressBool=false
         var instructionBool=false
-        var phoneBool=false
+        var phoneBool=true
+        var stopBool=true
+        var nameArr=[]
         var name=""
         var address=""
         var instruction=""
@@ -77,33 +80,82 @@ function Driver2() {
         var orderNumber=""
         var cnt=0
         for (let j = 0; j < newd.length; j++) {
+      //Route Letter/Number
           if (newd[j]==="FLEET"){
             var fleet=newd[j+1].split("-")
             var routeLetter=fleet[0]
           }
+          if (stopBool===true && newd[j].length===3 && isNumeric(newd[j])){
+            oldRoute=routeLetter+"-"+newd[j]
+            stopBool=false
+            nameBool=true
+          }
           if (newd[2].length===3){
             var oldRoute=routeLetter+"-"+newd[2]
-            var name=newd[4]+" "+newd[5]
           }
+      //Order Number
+          if (newd[j]==="ORDER"){
+            orderNumber=newd[j+1]
+          }
+      //Phone Number
+          if (newd[j]==="DELIVERY" && newd[j-1]!=="EST"){
+            phoneBool=false
+          }
+          if (phoneBool===true &&
+            newd[j].length===10 &&
+            isNumeric(newd[j])
+          ){
+            phoneNumber=newd[j]
+          }
+      //Time Window
           if (newd[j] === "WINDOW:"){
+            stopBool=false
+            nameBool=false
+            cnt=0
+            for (var k of nameArr){
+              if (k!=="ORDER" && !isNumeric(k)){
+                if (cnt<1){
+                  name+=k
+                }
+                if (cnt>0){
+                  name+=" "+k
+                }
+                cnt+=1
+              }
+            }
             var startTime=newd[j+1]+" "+newd[j+2]
             var endTime=newd[j+3]+" "+newd[j+4]
           }
-          if (newd[j] === "TIME:"){nameBool=true}
-          if (nameBool===true && isNumeric(newd[j])===true){
-            nameBool=false
-            addressBool=true
-            cnt=0}
-          if (nameBool===true && isNumeric(newd[j])===false){
-          cnt+=1
-            if (cnt>2){name+=" "}
-            if (cnt>1){name+=newd[j]}
+      //Name
+          if (nameBool===true){
+            nameArr.push(newd[j])
           }
-
-          if (newd[j+1]==="INSTRUCTIONS:"){
-            is1508=true
+      //Address
+          if (newd[j]==="ORDER"){
+            addressBool=true
+          }
+          if (newd[j]==="RESTRICTED" || newd[j]==="EST" || newd[j].includes("AM") || newd[j].includes("FZ") || newd[j].includes("CH")){
             addressBool=false
           }
+          if (addressBool===true){
+            if (isNumeric(newd[j]) && newd[j].length<8){
+              trueAddressBool=true
+              var addressFresh=true
+            }
+            if (trueAddressBool===true){
+              address+=newd[j]+" "
+              if (newd[j]==="PM" || newd[j]==="WINDOW:" || newd[j]==="WINDOW" || newd[j]==="001" || newd[j]==="002" || newd[j]==="003" || newd[j]==="004" || newd[j]==="005" || newd[j]==="006" || newd[j]==="007" || newd[j]==="008" || newd[j]==="009" || newd[j]==="010" || newd[j]==="011" || newd[j]==="012" || newd[j]==="013" || newd[j]==="014" || newd[j]==="015"){
+                address=""
+              }
+            }
+            console.log(newd[j], newd[j].length===5 && isNumeric(newd[j]))
+            if (newd[j].length===5 && isNumeric(newd[j]) && addressFresh===false){
+              trueAddressBool=false
+            }
+            addressFresh=false
+          }
+
+
           if (newd[j-1]==="INSTRUCTIONS:"){
             instructionBool=true
             cnt=1
@@ -111,22 +163,10 @@ function Driver2() {
           if (newd[j]==="ORDER"){
             orderNumber=newd[j+1]
           }
-          if (newd[j+3]==="ORDER" && !is1508){
-            addressBool=false;
-            address+=" "
-            address+=newd[j+1]
-            phoneNumber=newd[j+2]
-            orderNumber=newd[j+4]
-          }
-          if (addressBool===true){
-            cnt+=1
-            if (cnt>1){address+=" "}
-            address+=newd[j]
-          }
           if (newd[j]==="INSTRUCTIONS"){
           instructionBool=true;
           cnt=0}
-          if (newd[j]==="DRIVER"){
+          if (newd[j]==="DRIVER" || newd[j]==="CUSTOMER"){
           instructionBool=false
           }
           if (instructionBool===true){
@@ -347,7 +387,8 @@ function Driver2() {
             <label className="switch">
               <input type="checkbox"
                 checked={timeWindows}
-                onChange={handleTimeWindowsChange}>
+                onChange={handleTimeWindowsChange}
+                disabled>
               </input>
               <span className="slider round"></span>
             </label>
@@ -377,7 +418,7 @@ function Driver2() {
       {!initButton ? (
       <div>
         <p className="text">Routing Tab</p>
-        <Routed rtd={routedData}/>
+        <Routed rtd={routedData} strnmb={storeNumber}/>
       </div>
       ) : null}
     </div>

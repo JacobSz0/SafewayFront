@@ -15,7 +15,7 @@ function Nav() {
           <h5>DotCom</h5>
         </NavLink>
         <NavLink className="nav-redirect" to="/driver2">
-          <h5>Driver</h5>
+          <h5>Driver {"(Beta)"}</h5>
         </NavLink>
 
       </div>

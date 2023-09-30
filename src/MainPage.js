@@ -116,7 +116,7 @@ function MainPage() {
         <h2>DotCom</h2>
         </NavLink>
         <NavLink className="text" to="/driver2">
-          <h2>Driver</h2>
+          <h2>Driver {"(Beta)"}</h2>
         </NavLink>
         <br></br>
         <br></br>
