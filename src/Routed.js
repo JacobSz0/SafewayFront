@@ -150,11 +150,11 @@ function Routed(props){
 					Display Map
 				</div>
 			</button>
-			<button className="glass-lblue" onClick={qrToggle}>
+			<button className="glass-lblue" disabled onClick={qrToggle}>
 				<div className="tooltip-wrap">
 					<img className="icon-image" src={qrico} alt="" />
 						<div className="tooltip-content">
-							Display GIANT QR code for driver
+							Display GIANT QR code for driver. TEMPORARILY OUT OF SERVICE
 						</div>
 					</div>
 				</button>

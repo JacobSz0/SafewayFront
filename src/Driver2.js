@@ -21,6 +21,10 @@ function Driver2() {
     return /^-?\d+$/.test(value);
   }
 
+  const hasNumbers = (str) => {
+    return /\d/.test(str);
+  };
+
   function routeTab() {
     setInitButton(false)
   }
@@ -112,12 +116,12 @@ function Driver2() {
             phoneNumber=newd[j]
           }
       //Time Window
-          if (newd[j] === "WINDOW:"){
+          if (newd[j] === "WINDOW:" || newd[j]==="WINDOW"){
             stopBool=false
             nameBool=false
             cnt=0
             for (var k of nameArr){
-              if (k!=="ORDER" && !isNumeric(k)){
+              if (k!=="ORDER" && k!=="DEPART" && k!=="PM" && k!=="AM" && !hasNumbers(k)){
                 if (cnt<1){
                   name+=k
                 }
@@ -152,7 +156,6 @@ function Driver2() {
                 address=""
               }
             }
-            console.log(newd[j], newd[j].length===5 && isNumeric(newd[j]))
             if (newd[j].length===5 && isNumeric(newd[j]) && addressFresh===false){
               trueAddressBool=false
             }
