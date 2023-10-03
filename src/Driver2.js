@@ -142,7 +142,7 @@ function Driver2() {
           if (newd[j]==="ORDER"){
             addressBool=true
           }
-          if (newd[j]==="RESTRICTED" || newd[j]==="EST" || newd[j].includes("FZ") || newd[j].includes("CH")){
+          if (newd[j]==="RESTRICTED" || newd[j].includes("FZ") || newd[j].includes("CH")){
             addressBool=false
           }
           if (addressBool===true){
@@ -150,9 +150,10 @@ function Driver2() {
               trueAddressBool=true
               var addressFresh=true
             }
-            if (trueAddressBool===true){
+            //                              Filters out stuff we don't want
+            if (trueAddressBool===true && newd[j]!=="EST" && newd[j]!=="DELIVERY" && newd[j]!=="TIME" && newd[j]!=="PM" && !newd[j].includes(":")){
               address+=newd[j]+" "
-              if (newd[j]==="PM" || newd[j]==="WINDOW:" || newd[j]==="WINDOW" || newd[j]==="001" || newd[j]==="002" || newd[j]==="003" || newd[j]==="004" || newd[j]==="005" || newd[j]==="006" || newd[j]==="007" || newd[j]==="008" || newd[j]==="009" || newd[j]==="010" || newd[j]==="011" || newd[j]==="012" || newd[j]==="013" || newd[j]==="014" || newd[j]==="015"){
+              if (newd[j]==="WINDOW:" || newd[j]==="WINDOW" || newd[j]==="001" || newd[j]==="002" || newd[j]==="003" || newd[j]==="004" || newd[j]==="005" || newd[j]==="006" || newd[j]==="007" || newd[j]==="008" || newd[j]==="009" || newd[j]==="010" || newd[j]==="011" || newd[j]==="012" || newd[j]==="013" || newd[j]==="014" || newd[j]==="015"){
                 address=""
               }
             }
@@ -186,7 +187,6 @@ function Driver2() {
             phone1508.push(newd[j])
           }
         }
-        console.log(address)
         if (orderNumber!==""){
           var secretObj={}
           secretObj["oldRoute"]=oldRoute
