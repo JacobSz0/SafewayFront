@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/SafewayFront/static/css/main.f9b40a3d.css",
-    "main.js": "/SafewayFront/static/js/main.a43b3122.js",
+    "main.js": "/SafewayFront/static/js/main.3115805e.js",
     "static/js/703.a8993049.chunk.js": "/SafewayFront/static/js/703.a8993049.chunk.js",
     "static/js/598.109f48f0.chunk.js": "/SafewayFront/static/js/598.109f48f0.chunk.js",
     "static/js/787.eaa684dd.chunk.js": "/SafewayFront/static/js/787.eaa684dd.chunk.js",
@@ -17,13 +17,13 @@
     "static/media/pin.png": "/SafewayFront/static/media/pin.e6e2a35e2c2c9d0d33ed.png",
     "index.html": "/SafewayFront/index.html",
     "main.f9b40a3d.css.map": "/SafewayFront/static/css/main.f9b40a3d.css.map",
-    "main.a43b3122.js.map": "/SafewayFront/static/js/main.a43b3122.js.map",
+    "main.3115805e.js.map": "/SafewayFront/static/js/main.3115805e.js.map",
     "703.a8993049.chunk.js.map": "/SafewayFront/static/js/703.a8993049.chunk.js.map",
     "598.109f48f0.chunk.js.map": "/SafewayFront/static/js/598.109f48f0.chunk.js.map",
     "787.eaa684dd.chunk.js.map": "/SafewayFront/static/js/787.eaa684dd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f9b40a3d.css",
-    "static/js/main.a43b3122.js"
+    "static/js/main.3115805e.js"
   ]
 }
