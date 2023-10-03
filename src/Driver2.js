@@ -142,7 +142,7 @@ function Driver2() {
           if (newd[j]==="ORDER"){
             addressBool=true
           }
-          if (newd[j]==="RESTRICTED" || newd[j]==="EST" || newd[j].includes("AM") || newd[j].includes("FZ") || newd[j].includes("CH")){
+          if (newd[j]==="RESTRICTED" || newd[j]==="EST" || newd[j].includes("FZ") || newd[j].includes("CH")){
             addressBool=false
           }
           if (addressBool===true){
@@ -186,7 +186,8 @@ function Driver2() {
             phone1508.push(newd[j])
           }
         }
-        if (address!==""){
+        console.log(address)
+        if (orderNumber!==""){
           var secretObj={}
           secretObj["oldRoute"]=oldRoute
           secretObj["startTime"]=startTime
@@ -220,6 +221,7 @@ function Driver2() {
         console.log(secretArray2)
       setManifestData(secretArray2)
     }
+    else{console.log ("error")}
   }
 
   const convertTime = timeStr => {
