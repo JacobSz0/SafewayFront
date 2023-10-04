@@ -31,6 +31,8 @@ function Routed(props){
 	const [fullLink, setFullLink] = useState("http://localhost:4000/dotcom")
   const [showQr, setShowQr] = useState(false)
   const [showMap, setShowMap] = useState(false)
+	const [steve, setStephen] = useState("Error")
+
 
 	function qrToggle(){
     if (showQr===false){setShowQr(true); setShowMap(false)}
@@ -87,6 +89,14 @@ function Routed(props){
 		setFullLink(newLink)
 	}
 
+	function prepareOrderNumbers(bigData){
+		var stephen=""
+		for (var i of bigData[0]){
+			stephen+=i.oldRoute+"  "+i.orderNumber+"\n"
+		}
+		setStephen(stephen)
+	}
+
 	function condenseLink(bigData){
 		console.log(bigData[0])
     var condensedLink="https://jacobsz0.github.io/SafewayFront?data="
@@ -132,6 +142,7 @@ function Routed(props){
 		makeFullLink(routedData)
 		setRoutedData(props.rtd)
 		setStoreNumber(props.strnmb)
+		prepareOrderNumbers(routedData)
   }, [routedData]);
 
 	return(
@@ -156,12 +167,18 @@ function Routed(props){
 						<div className="tooltip-content">
 							Display GIANT QR code for driver. TEMPORARILY OUT OF SERVICE
 						</div>
-					</div>
-				</button>
+				</div>
+			</button>
 			<button className="tooltip-wrap glass-lblue" onClick={() => {navigator.clipboard.writeText(fullLink)}}>
 				<img className="icon-image" src={copy} alt="" />
 				<div className="tooltip-content">
 					Copy Link
+				</div>
+			</button>
+			<button className="tooltip-wrap glass-lblue" onClick={() => {navigator.clipboard.writeText(steve)}}>
+				<img className="icon-image" src={copy} alt="" />
+				<div className="tooltip-content">
+					Copy all order #s for tip
 				</div>
 			</button>
 			{showMap ? (
@@ -208,7 +225,7 @@ function Routed(props){
 				<tbody>
 				{routedData[0].map((i) => {
 					return(
-						<tr key={i.orderNumber}>
+						<tr className="highlight-route" key={i.orderNumber}>
 							<td>{i.oldRoute}</td>
 							<td>{i.name}</td>
 							<td><a href={"https://maps.google.com/?q=" + i.address}>{i.address}</a></td>
@@ -229,7 +246,7 @@ function Routed(props){
 						</tr>
 					)
 				})}
-					<tr>
+					<tr className="highlight-route">
 						<td>End</td>
 						<td></td>
 						<td><a href={"https://maps.google.com/?q="+storeNumber[1]}>{storeNumber[0]}</a></td>

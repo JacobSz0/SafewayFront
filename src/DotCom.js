@@ -30,7 +30,7 @@ function DotCom() {
   const [manifestBox, setManifestBox] = useState("");
   const [manifestData, setManifestData] = useState([{name:"pending...", address: "pending...", startTime: "pending...", endTime: "pending...", orderNumber: "pending..."}])
   const [routedData, setRoutedData] = useState([[{name:"Wait for it...", address: "", startTime: "", endTime: "", startTime24:"08:00", endTime24: "09:00", oldRoute: "", orderNumber: "pending...", coordinates:{lat:47.652690, lng:-122.688230}}]])
-  const [storeNumber, setStoreNumber] = useState(["1508", [47.5688609, -122.2879537]])
+  const [storeNumber, setStoreNumber] = useState(["1508 (South Seattle MFC)", [47.5688609, -122.2879537]])
   const [initButton, setInitButton] = useState(true)
   const [newRouteLink, setNewRouteLink] = useState("http://localhost:4000/dotcom")
   const [showQr, setShowQr] = useState(false)

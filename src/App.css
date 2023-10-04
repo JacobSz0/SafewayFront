@@ -500,3 +500,7 @@ input:checked + .slider:before {
   width:250px;
   height: auto;
 }
+
+.highlight-route:hover{
+  background-image: linear-gradient(to right top, #b19900, #bcbc19, #c0c04a, #d0d67f, #e7e8bc);
+}
