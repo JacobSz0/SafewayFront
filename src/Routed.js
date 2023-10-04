@@ -9,6 +9,7 @@ import copy from "./img/copy.png"
 import homePin from "./img/home-pin.png"
 import mapIcon from "./img/map.png"
 import pinPin from "./img/pin.png"
+import numbersImg from "./img/numbers.png"
 import { MapContainer, TileLayer, Marker, Tooltip, Popup } from 'react-leaflet';
 import L from "leaflet";
 
@@ -32,6 +33,7 @@ function Routed(props){
   const [showQr, setShowQr] = useState(false)
   const [showMap, setShowMap] = useState(false)
 	const [steve, setStephen] = useState("Error")
+  const [mapQuest, setMapQuest] = useState([false, "https://maps.google.com/?q="] )
 
 
 	function qrToggle(){
@@ -97,6 +99,15 @@ function Routed(props){
 		setStephen(stephen)
 	}
 
+	function handleMapQuestChange(){
+		if (mapQuest[0]===false){
+			setMapQuest([true, "https://www.mapquest.com/directions/to/"])
+		}
+		else{
+			setMapQuest([false, "https://maps.google.com/?q="])
+		}
+	}
+
 	function condenseLink(bigData){
 		console.log(bigData[0])
     var condensedLink="https://jacobsz0.github.io/SafewayFront?data="
@@ -143,7 +154,7 @@ function Routed(props){
 		setRoutedData(props.rtd)
 		setStoreNumber(props.strnmb)
 		prepareOrderNumbers(routedData)
-  }, [routedData]);
+  }, [routedData, mapQuest]);
 
 	return(
 		<div>
@@ -176,11 +187,20 @@ function Routed(props){
 				</div>
 			</button>
 			<button className="tooltip-wrap glass-lblue" onClick={() => {navigator.clipboard.writeText(steve)}}>
-				<img className="icon-image" src={copy} alt="" />
+				<img className="icon-image" src={numbersImg} alt="" />
 				<div className="tooltip-content">
 					Copy all order #s for tip
 				</div>
 			</button>
+			<span className="text">GMaps/MapQuest{"  "}</span>
+				<label className="switch text">
+					<input type="checkbox"
+						checked={mapQuest[0]}
+						onChange={handleMapQuestChange}>
+					</input>
+					<span className="slider round"></span>
+				</label>
+
 			{showMap ? (
 				<div>
 					<MapContainer center={storeNumber[1]} zoom={11} style={{height: "400px", width: "100%"}}>
@@ -228,7 +248,7 @@ function Routed(props){
 						<tr className="highlight-route" key={i.orderNumber}>
 							<td>{i.oldRoute}</td>
 							<td>{i.name}</td>
-							<td><a href={"https://maps.google.com/?q=" + i.address}>{i.address}</a></td>
+							<td><a href={mapQuest[1] + i.address}>{i.address}</a></td>
 							<td>{i.startTime} - {i.endTime}</td>
 							<td className="text-center">
 								{i.instruction ? (
@@ -249,7 +269,7 @@ function Routed(props){
 					<tr className="highlight-route">
 						<td>End</td>
 						<td></td>
-						<td><a href={"https://maps.google.com/?q="+storeNumber[1]}>{storeNumber[0]}</a></td>
+						<td><a href={mapQuest[1]+storeNumber[1]}>{storeNumber[0]}</a></td>
 					</tr>
 				</tbody>
 			</table>
